@@ -23,7 +23,15 @@ preloaded_dicts = {"Wheel of Time":{
                             {"title": "", "book_num": 9,
                                     "filename": "Jordan, Robert - 09 - Winter's Heart.epub"},
                             {"title": "", "book_num": 10,
-                                    "filename": "Jordan, Robert - 10 - Crossroads of Twilight.epub"}
+                                    "filename": "Jordan, Robert - 10 - Crossroads of Twilight.epub"},
+                            {"title": "", "book_num": 11,
+                                    "filename": "Jordan, Robert - 11 - Knife of Dreams.epub"},
+                            {"title": "", "book_num": 12,
+                                    "filename": "Jordan, Robert - 12 - The Gathering Storm.epub"},
+                            {"title": "", "book_num": 13,
+                                    "filename": "Jordan, Robert - 13 - Towers of Midnight.epub"},
+                            {"title": "", "book_num": 14,
+                                    "filename": "Jordan, Robert - 14 - A Memory of Light.epub"}
                             ]},
                     "Lord of the Rings": {
                         "books":[{"title": "The Fellowship of the Ring",
@@ -108,7 +116,7 @@ def extract_chapters(file_loader_obj, secs = None, method_label = None, title_bs
 def extract_ch_data(html, method_label = None, title_bs_tags = None):
     # Takes HTML and returns the title
     soup = BeautifulSoup(html, 'html.parser')
-    #text = soup.find_all(text=True)
+    # text = soup.find_all(text=True)
     # text = soup.get_text()
 
     if method_label == "WoT1":
@@ -128,45 +136,55 @@ def extract_ch_data(html, method_label = None, title_bs_tags = None):
 
 wot_sec_dicts = {0:[6]+list(range(8,61)),
                 1: list(range(9,60)),
-                2: list(range(9,66))}
-wot_mlabels = {0:"WoT1", 1:"WoT1", 2:"WoT1"}
+                2: list(range(9,66)),
+                3: list(range(9,67))}
+wot_mlabels = {0:"WoT1", 1:"WoT1", 2:"WoT1", 3:"WoT1"}
 wot_bs_tags = {0:{'element':"p", 'class': ["h4","h3 sgc-2", "tx15 sgc-2"]},
                 1: {'element':"p", 'class': ["h47", "tx428 sgc-2", "tx428"]},
-                2: {'element':"h2", 'class': ["h2", "h2a"]}}
+                2: {'element':"h2", 'class': ["h2", "h2a"]},
+                3: {'element':"h2", 'class': ["h2", "h2a"]}}
 
 
 # Extract chapters from each books of WoT
 series_index = "Wheel of Time"
 folder_wot = "C:\\Users\\Phoenix\\Documents\\Literature\\Fiction\\Robert Jordan\\"
-for book_index in [0,1,2]: #[0,1,2]:
-    # Grab the filename and some metatdata
+for book_index in range(0,14):
+    # Set some of the basic book attributes
     filename = preloaded_dicts[series_index]["books"][book_index]["filename"]
     file_full_path = folder_wot+filename
     book = epub.read_epub(file_full_path)
     preloaded_dicts[series_index]["books"][book_index]["title"] = book.get_metadata("DC", "title")[0][0]
     preloaded_dicts[series_index]["books"][book_index]["file_type"] = filename[filename.find(".")+1:]
+    preloaded_dicts[series_index]["books"][book_index]["chapters"] = []
+
+for book_index in [0]: #[0,1,2]:
+    # Grab the filename and some metatdata
+    filename = preloaded_dicts[series_index]["books"][book_index]["filename"]
+    file_full_path = folder_wot+filename
     # Extract the chapters
     ch_data = extract_chapters(file_full_path, secs = wot_sec_dicts[book_index], 
                                 method_label = wot_mlabels[book_index],
                                 title_bs_tags = wot_bs_tags[book_index])
+    print(ch_data)
+    print(" ")
     preloaded_dicts[series_index]["books"][book_index]["chapters"] = ch_data
 
 
-book_index = 7
+book_index = 3
 
 file_loader_obj1 = folder_wot+preloaded_dicts[series_index]["books"][book_index]["filename"]
 book = epub.read_epub(file_loader_obj1)
 items = list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
 
 # WoT #1 starts on sec 7 (ie sec 6 is the prologue, sec 7 is ch 1)
-sec = 24
+sec = 9
 
-print(book.get_metadata("DC", "title")[0][0])
+# print(book.get_metadata("DC", "title")[0][0])
 
 # ch_data = items[sec].get_body_content()
 
 soup = BeautifulSoup(items[sec].get_body_content(), 'html.parser')
-# ch_data = soup.prettify()
+ch_data = soup.prettify()
 
 ch_data = [item.text.strip() for item in soup.find_all("h2")] #, {"class":["h2", "h2a"]})]
 
