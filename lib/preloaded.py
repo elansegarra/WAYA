@@ -126,7 +126,7 @@ def extract_ch_data(html, method_label = None, title_bs_tags = None):
         # Extract all the body text (everything after last element of ch title)
         all_text = soup.get_text() 
         ch_text = all_text[all_text.find(ch_title[-1])+len(ch_title[-1]):].strip()
-        ch_text = ch_text[0:25]+'  ...  '+ch_text[-25:]
+        #ch_text = ch_text[0:25]+'  ...  '+ch_text[-25:]
         # Cleaning titles (must do after getting rest of text, or it won't match title found in text)
         ch_title = [' '.join([wd.strip() for wd in text.split()]) for text in ch_title]
         # Assemble chapter info dict

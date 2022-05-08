@@ -96,7 +96,7 @@ with st.sidebar:
         curr_ch = st.selectbox("Chapter:", chapter_names)
         curr_ch_dict = next(ch for ch in curr_bk_chapters if ch["name"] == curr_ch)
 
-st.write(all_books)
+# st.write(all_books)
 
 
 # Main Page
@@ -111,7 +111,7 @@ else:
     if search_value != "":
         # res_window.text(f'The search term is "{search_value}"')
 
-        context_range = 20
+        context_range = 150
         search_res = []
         for book in all_books:
             # Skip searching all books after the book currently being read
