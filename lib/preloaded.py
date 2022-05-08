@@ -137,12 +137,14 @@ def extract_ch_data(html, method_label = None, title_bs_tags = None):
 wot_sec_dicts = {0:[6]+list(range(8,61)),
                 1: list(range(9,60)),
                 2: list(range(9,66)),
-                3: list(range(9,67))}
-wot_mlabels = {0:"WoT1", 1:"WoT1", 2:"WoT1", 3:"WoT1"}
+                3: list(range(9,67)),
+                4: list(range(9,66))}
+wot_mlabels = {0:"WoT1", 1:"WoT1", 2:"WoT1", 3:"WoT1", 4:"WoT1"}
 wot_bs_tags = {0:{'element':"p", 'class': ["h4","h3 sgc-2", "tx15 sgc-2"]},
                 1: {'element':"p", 'class': ["h47", "tx428 sgc-2", "tx428"]},
                 2: {'element':"h2", 'class': ["h2", "h2a"]},
-                3: {'element':"h2", 'class': ["h2", "h2a"]}}
+                3: {'element':"h2", 'class': ["h2", "h2a"]},
+                4: {'element':["h2", "h3"], 'class':["h2", "h3"]}}
 
 
 # Extract chapters from each books of WoT
@@ -157,7 +159,7 @@ for book_index in range(0,14):
     preloaded_dicts[series_index]["books"][book_index]["file_type"] = filename[filename.find(".")+1:]
     preloaded_dicts[series_index]["books"][book_index]["chapters"] = []
 
-for book_index in [0]: #[0,1,2]:
+for book_index in [0,1,2,3,4]: #[0,1,2]:
     # Grab the filename and some metatdata
     filename = preloaded_dicts[series_index]["books"][book_index]["filename"]
     file_full_path = folder_wot+filename
@@ -165,32 +167,32 @@ for book_index in [0]: #[0,1,2]:
     ch_data = extract_chapters(file_full_path, secs = wot_sec_dicts[book_index], 
                                 method_label = wot_mlabels[book_index],
                                 title_bs_tags = wot_bs_tags[book_index])
-    print(ch_data)
-    print(" ")
+    # print(ch_data)
+    # print(" ")
     preloaded_dicts[series_index]["books"][book_index]["chapters"] = ch_data
 
 
-book_index = 3
+book_index = 4
 
 file_loader_obj1 = folder_wot+preloaded_dicts[series_index]["books"][book_index]["filename"]
 book = epub.read_epub(file_loader_obj1)
 items = list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
 
 # WoT #1 starts on sec 7 (ie sec 6 is the prologue, sec 7 is ch 1)
-sec = 9
+sec = 55
 
 # print(book.get_metadata("DC", "title")[0][0])
 
 # ch_data = items[sec].get_body_content()
 
-soup = BeautifulSoup(items[sec].get_body_content(), 'html.parser')
-ch_data = soup.prettify()
+# soup = BeautifulSoup(items[sec].get_body_content(), 'html.parser')
+# print(soup.prettify()[0:900])
 
-ch_data = [item.text.strip() for item in soup.find_all("h2")] #, {"class":["h2", "h2a"]})]
+# ch_data = [item.text.strip() for item in soup.find_all(["h2", "h3"], {"class":["h2", "h3"]})]
 
 # all_text = soup.get_text() 
 # ch_data = all_text[all_text.find(ch_title)+len(ch_title):].strip()
 
-print("")
-print((ch_data[0:900]))
+# print("")
+# print((ch_data[0:900]))
 
