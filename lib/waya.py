@@ -89,10 +89,12 @@ with st.sidebar:
         st.title("Where are you currently?")
         book_names = [book["title"] for book in all_books]
         curr_book = st.selectbox("Book:", book_names)
-        curr_bk_chapters = next(bk for bk in all_books if bk["title"] == curr_book)['chapters']
+        curr_book_dict = next(bk for bk in all_books if bk["title"] == curr_book)
+        curr_bk_chapters = curr_book_dict['chapters']
         chapter_names = [ch['name'] for ch in curr_bk_chapters]
         #st.text(chapter_names)
         curr_ch = st.selectbox("Chapter:", chapter_names)
+        curr_ch_dict = next(ch for ch in curr_bk_chapters if ch["name"] == curr_ch)
 
 st.write(all_books)
 
@@ -110,10 +112,15 @@ else:
         res_window.title("Results")
         res_window.text(f'The search term is "{search_value}"')
 
-        context_range = 200
+        context_range = 20
         search_res = []
         for book in all_books:
+            # Skip searching all books after the book currently being read
+            if (book['book_num'] > curr_book_dict['book_num']): break
             for ch in book['chapters']:
+                # Skip searching all chapters after (and including) chapter currently being read
+                curr_reading_this_book = (book['book_num'] == curr_book_dict['book_num'])
+                if curr_reading_this_book & (ch['bs_sec'] >= curr_ch_dict['bs_sec']): break
                 # Go through each instance of finding the esarch term
                 for res in re.finditer(search_value, ch['text'],flags=re.IGNORECASE):
                     res_start = max(0,res.start()-context_range)
@@ -121,5 +128,6 @@ else:
                     context = ch['text'][res_start:res_end]
                     search_res.append({"book":book["title"], "chapter":ch['name'], "context":context})
 
+        res_window.metric("Found", len(search_res))
         res_window.write(search_res)
 
