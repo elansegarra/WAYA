@@ -109,8 +109,7 @@ else:
 
     res_window = st.container()
     if search_value != "":
-        res_window.title("Results")
-        res_window.text(f'The search term is "{search_value}"')
+        # res_window.text(f'The search term is "{search_value}"')
 
         context_range = 20
         search_res = []
@@ -128,9 +127,28 @@ else:
                     context = ch['text'][res_start:res_end]
                     search_res.append({"book":book["title"], "chapter":ch['name'], "context":context})
 
-        col1, col2, col3 = res_window.columns(3)
-        col1.metric("Found", len(search_res))
-        col2.metric("Found", len(search_res))
-        col3.metric("Found", len(search_res))
-        res_window.write(search_res)
+        # Creating text with search value highlighted
+        highlight = f'<span style="background-color:Yellow;">{search_value}</span>'
+        
+        # Result title with total results found
+        res_window.title(f"Results ({len(search_res)} instances found)")
+        
+        # Displaying the search results, grouped by book
+        book_res = ""
+        if len(search_res)>0:
+            # Inserting results into dataframe and creating dictionary of coutns by book
+            res_df = pd.DataFrame(search_res)
+            res_counts = res_df.groupby(by='book').agg('count')['context'].to_dict()
+
+            for res in search_res:
+                # Display book heading if different from past
+                if book_res != res['book']:
+                    book_res = res['book']
+                    book_res_exp = res_window.expander(f"{res['book']} ({res_counts[book_res]} results found)")
+                    
+                # Display the context with search terms highlighted
+                search_res_highlit = res['context'].replace(search_value, highlight)
+                book_res_exp.markdown('"'+search_res_highlit+'"', unsafe_allow_html=True)
+        
+        # res_window.write(search_res)
 
