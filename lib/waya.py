@@ -128,6 +128,9 @@ else:
                     context = ch['text'][res_start:res_end]
                     search_res.append({"book":book["title"], "chapter":ch['name'], "context":context})
 
-        res_window.metric("Found", len(search_res))
+        col1, col2, col3 = res_window.columns(3)
+        col1.metric("Found", len(search_res))
+        col2.metric("Found", len(search_res))
+        col3.metric("Found", len(search_res))
         res_window.write(search_res)
 
