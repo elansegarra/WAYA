@@ -157,7 +157,7 @@ for book_index in range(0,14):
     book = epub.read_epub(file_full_path)
     preloaded_dicts[series_index]["books"][book_index]["title"] = book.get_metadata("DC", "title")[0][0]
     preloaded_dicts[series_index]["books"][book_index]["file_type"] = filename[filename.find(".")+1:]
-    preloaded_dicts[series_index]["books"][book_index]["chapters"] = []
+    preloaded_dicts[series_index]["books"][book_index]["chapters"] = [{'name':"TBD", 'text':"",'bs_sec':0}]
 
 for book_index in [0,1,2,3,4]: #[0,1,2]:
     # Grab the filename and some metatdata
