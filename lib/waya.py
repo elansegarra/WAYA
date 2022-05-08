@@ -4,6 +4,7 @@ import numpy as np
 import ebooklib
 from ebooklib import epub
 import preloaded
+import re
 
 # To run from command line: "streamlit waya.py --server 8888"
 
@@ -102,7 +103,23 @@ if len(all_books) == 0:
     st.title("Pick or Upload a book/series in the sidebar to the left.")
 else:
     st.title("Who/What Do You Want to Search For?")
-    st.text_input("Search:", placeholder="Type a name or phrase here")
+    search_value = st.text_input("Search:", placeholder="Type a name or phrase here")
 
+    res_window = st.container()
+    if search_value != "":
+        res_window.title("Results")
+        res_window.text(f'The search term is "{search_value}"')
 
-    
+        context_range = 200
+        search_res = []
+        for book in all_books:
+            for ch in book['chapters']:
+                # Go through each instance of finding the esarch term
+                for res in re.finditer(search_value, ch['text'],flags=re.IGNORECASE):
+                    res_start = max(0,res.start()-context_range)
+                    res_end = res.start()+context_range+len(search_value)
+                    context = ch['text'][res_start:res_end]
+                    search_res.append({"book":book["title"], "chapter":ch['name'], "context":context})
+
+        res_window.write(search_res)
+
