@@ -128,6 +128,7 @@ else:
                     search_res.append({"book":book["title"], "chapter":ch['name'], "context":context})
 
         # Creating text with search value highlighted
+        search_pattern = re.compile(search_value, re.IGNORECASE)
         highlight = f'<span style="background-color:Yellow;">{search_value}</span>'
         
         # Result title with total results found
@@ -140,14 +141,15 @@ else:
             res_df = pd.DataFrame(search_res)
             res_counts = res_df.groupby(by='book').agg('count')['context'].to_dict()
 
-            for res in search_res:
+            for res_item in search_res:
                 # Display book heading if different from past
-                if book_res != res['book']:
-                    book_res = res['book']
-                    book_res_exp = res_window.expander(f"{res['book']} ({res_counts[book_res]} results found)")
+                if book_res != res_item['book']:
+                    book_res = res_item['book']
+                    book_res_exp = res_window.expander(f"{res_item['book']} ({res_counts[book_res]} results found)")
                     
                 # Display the context with search terms highlighted
-                search_res_highlit = res['context'].replace(search_value, highlight)
+                # search_res_highlit = res_item['context'].replace(search_value, highlight)
+                search_res_highlit = search_pattern.sub(highlight, res_item['context'])
                 book_res_exp.markdown('"'+search_res_highlit+'"', unsafe_allow_html=True)
         
         # res_window.write(search_res)
