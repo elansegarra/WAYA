@@ -14,5 +14,5 @@ The process is quick and easy:
  3. Search for any character or phrase without worrying about spoilers!
 
 WAYA Features:
- - Several preloaded book series including The Wheel of Time, Lord of the Rings, and Harry Potter.
+ - Several preloaded book series.
  - Flexibility to see context around search terms.
