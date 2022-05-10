@@ -6,7 +6,7 @@ from ebooklib import epub
 import preloaded
 import re
 
-# To run from command line: "streamlit waya.py --server 8888"
+# To run from command line: "streamlit run waya.py --server.port 8889"
 
 st.set_page_config(page_title="WAYA: Who Are You Again?", page_icon=None, 
                     layout="centered", initial_sidebar_state="auto", menu_items=None)
@@ -53,6 +53,16 @@ def load_book(file_loader_obj):
 
 def load_epub_book(file_loader_obj):
     return "What?!"
+
+def merge_overlapping_strings(s1, s2, min_overlap = 1):
+    biggest_overlap = 0
+    # Go through all suffixes of s1 (starting with single char)
+    for i in range(min_overlap,len(s1)):
+        # Check if suffix of s1 matches prefix of s2
+        if s1[-i:] == s2[:i]:
+            biggest_overlap = i
+    if biggest_overlap == 0: return(s1+s2)
+    else:                    return(s1[:-biggest_overlap]+s2)
 
 # Grab the preloaded series information
 preloaded_dicts = preloaded.preloaded_dicts
@@ -125,7 +135,19 @@ else:
                     res_start = max(0,res.start()-context_range)
                     res_end = res.start()+context_range+len(search_value)
                     context = ch['text'][res_start:res_end]
-                    search_res.append({"book":book["title"], "chapter":ch['name'], "context":context})
+                    # Check if overlap with previous result instance
+                    contexts_overlap = ( (len(search_res) > 0) and 
+                        (res_start - search_res[-1]["res_ind_start"] <= context_range + len(search_value)) )
+                    same_bk_ch = ( (len(search_res) > 0) and 
+                        (search_res[-1]["book"] == book["title"]) and 
+                        (search_res[-1]["chapter"] == ch["name"]) )
+                    if contexts_overlap and same_bk_ch:
+                        # Flag previous res for overlap and merge
+                        search_res[-1]["overlap"] = True
+                        context = merge_overlapping_strings(search_res[-1]["context"], context)
+                    search_res.append({"book":book["title"], "chapter":ch['name'], 
+                                        "res_ind_start":res_start, 
+                                        "overlap": False, "context":context})
 
         # Creating text with search value highlighted
         search_pattern = re.compile(search_value, re.IGNORECASE)
@@ -142,6 +164,8 @@ else:
             res_counts = res_df.groupby(by='book').agg('count')['context'].to_dict()
 
             for res_item in search_res:
+                # Skip if flagged due to overlapping contexts
+                if res_item["overlap"]: continue
                 # Display book heading if different from past
                 if book_res != res_item['book']:
                     book_res = res_item['book']
