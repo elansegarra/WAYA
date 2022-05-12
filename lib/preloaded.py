@@ -134,42 +134,46 @@ def extract_ch_data(html, method_label = None, title_bs_tags = None):
     return ch_data
 
 
-wot_sec_dicts = {0:[6]+list(range(8,61)),
-                1: list(range(9,60)),
-                2: list(range(9,66)),
-                3: list(range(9,67)),
-                4: list(range(9,66))}
-wot_mlabels = {0:"WoT1", 1:"WoT1", 2:"WoT1", 3:"WoT1", 4:"WoT1"}
-wot_bs_tags = {0:{'element':"p", 'class': ["h4","h3 sgc-2", "tx15 sgc-2"]},
-                1: {'element':"p", 'class': ["h47", "tx428 sgc-2", "tx428"]},
-                2: {'element':"h2", 'class': ["h2", "h2a"]},
+wot_sec_dicts = {1:[6]+list(range(8,61)),
+                2: list(range(9,60)),
+                3: list(range(9,66)),
+                4: list(range(9,67)),
+                5: list(range(9,66)),
+                6: list(range(9,66))}
+wot_mlabels = {1:"WoT1", 2:"WoT1", 3:"WoT1", 4:"WoT1",
+                5:"WoT1", 6:"WoT1"}
+wot_bs_tags = {1:{'element':"p", 'class': ["h4","h3 sgc-2", "tx15 sgc-2"]},
+                2: {'element':"p", 'class': ["h47", "tx428 sgc-2", "tx428"]},
                 3: {'element':"h2", 'class': ["h2", "h2a"]},
-                4: {'element':["h2", "h3"], 'class':["h2", "h3"]}}
+                4: {'element':"h2", 'class': ["h2", "h2a"]},
+                5: {'element':["h2", "h3"], 'class':["h2", "h3"]},
+                6: {'element':["h2"], 'class':["h2", "h2a", "h2c"]}}
 
 
 # Extract chapters from each books of WoT
 series_index = "Wheel of Time"
 folder_wot = "C:\\Users\\Phoenix\\Documents\\Literature\\Fiction\\Robert Jordan\\"
-for book_index in range(0,14):
+for book_dict in preloaded_dicts[series_index]["books"]:
     # Set some of the basic book attributes
-    filename = preloaded_dicts[series_index]["books"][book_index]["filename"]
+    filename = book_dict["filename"]
     file_full_path = folder_wot+filename
     book = epub.read_epub(file_full_path)
-    preloaded_dicts[series_index]["books"][book_index]["title"] = book.get_metadata("DC", "title")[0][0]
-    preloaded_dicts[series_index]["books"][book_index]["file_type"] = filename[filename.find(".")+1:]
-    preloaded_dicts[series_index]["books"][book_index]["chapters"] = [{'name':"TBD", 'text':"",'bs_sec':0}]
+    book_dict["title"] = book.get_metadata("DC", "title")[0][0]
+    book_dict["file_type"] = filename[filename.find(".")+1:]
+    book_dict["chapters"] = [{'name':"TBD", 'text':"",'bs_sec':0}]
 
-for book_index in [0,1,2,3,4]: #[0,1,2]:
+for book_dict in preloaded_dicts[series_index]["books"][0:6]:#0,1,2,3,4]: #[0,1,2]:
     # Grab the filename and some metatdata
-    filename = preloaded_dicts[series_index]["books"][book_index]["filename"]
+    filename = book_dict["filename"]
+    book_num = book_dict['book_num']
     file_full_path = folder_wot+filename
     # Extract the chapters
-    ch_data = extract_chapters(file_full_path, secs = wot_sec_dicts[book_index], 
-                                method_label = wot_mlabels[book_index],
-                                title_bs_tags = wot_bs_tags[book_index])
+    ch_data = extract_chapters(file_full_path, secs = wot_sec_dicts[book_num], 
+                                method_label = wot_mlabels[book_num],
+                                title_bs_tags = wot_bs_tags[book_num])
     # print(ch_data)
     # print(" ")
-    preloaded_dicts[series_index]["books"][book_index]["chapters"] = ch_data
+    book_dict["chapters"] = ch_data
 
 
 book_index = 4
