@@ -5,10 +5,12 @@ import ebooklib
 from ebooklib import epub
 import preloaded
 import re
+from PIL import Image
 
 # To run from command line: "streamlit run waya.py --server.port 8889"
 
-st.set_page_config(page_title="WAYA: Who Are You Again?", page_icon=None, 
+im = Image.open("../img/read-book-32x32.png")
+st.set_page_config(page_title="WAYA: Who Are You Again?", page_icon=im, 
                     layout="centered", initial_sidebar_state="auto", menu_items=None)
 
 ###########################################################################
