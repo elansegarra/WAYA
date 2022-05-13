@@ -1,6 +1,7 @@
 import ebooklib
 from ebooklib import epub
 from bs4 import BeautifulSoup
+from numpy import median
 
 
 def extract_chapters(file_loader_obj, secs = None, method_label = None, title_bs_tags = None):
@@ -40,3 +41,23 @@ def extract_ch_data(html, method_label = None, title_bs_tags = None):
         # Assemble chapter info dict
         ch_data = {"name": " ".join(ch_title), "text": ch_text}
     return ch_data
+
+def get_relevant_secs(epub_file):
+    # Returns a list of the sections that appear to be actual chapters
+
+    # Open the epub file
+    book = epub.read_epub(epub_file)
+    items = list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
+    
+    # Get the number of characters from the actual text of each section
+    sec_lens = []
+    for i in range(len(items)):
+        soup = BeautifulSoup(items[i].get_body_content(), 'html.parser')
+        # print(f"Section {i} text has {len(soup.get_text())} characters")
+        sec_lens.append(len(soup.get_text()))
+    
+    # Section needs at least 20% of median length to be relevant
+    char_len_thresh = median(sec_lens)/5 
+    relevant_secs = [i for i in range(len(sec_lens)) if sec_lens[i] >= char_len_thresh]
+
+    return relevant_secs
