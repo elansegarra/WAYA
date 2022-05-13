@@ -1,189 +1,159 @@
 import ebooklib
 from ebooklib import epub
 from bs4 import BeautifulSoup
+from epub_parser import extract_ch_data, extract_chapters
 
 # Defining the preloaded series and associated files
 folder_wot = "C:\\Users\\Phoenix\\Documents\\Literature\\Fiction\\Robert Jordan\\"
 preloaded_dicts = {
     "Wheel of Time":{ 
-                        "books":[{"title": "", "book_num": 1,
-                "filename": folder_wot+"Jordan, Robert - 01 - The Eye of the World.epub"},
-                            {"title": "", "book_num": 2,
-                    "filename": folder_wot+"Jordan, Robert - 02 - The Great Hunt.epub"},
-                            {"title": "", "book_num": 3,
-                    "filename": folder_wot+"Jordan, Robert - 03 - The Dragon Reborn.epub"},
-                            {"title": "", "book_num": 4,
-                    "filename": folder_wot+"Jordan, Robert - 04 - The Shadow Rising.epub"},
-                            {"title": "", "book_num": 5,
-                    "filename": folder_wot+"Jordan, Robert - 05 - The Fires of Heaven.epub"},
-                            {"title": "", "book_num": 6,
-                    "filename": folder_wot+"Jordan, Robert - 06 - Lord of Chaos.epub"},
-                            {"title": "", "book_num": 7,
-                    "filename": folder_wot+"Jordan, Robert - 07 - A Crown of Swords.epub"},
-                            {"title": "", "book_num": 8,
-                    "filename": folder_wot+"Jordan, Robert - 08 - The Path of Daggers.epub"},
-                            {"title": "", "book_num": 9,
-                    "filename": folder_wot+"Jordan, Robert - 09 - Winter's Heart.epub"},
-                            {"title": "", "book_num": 10,
-                    "filename": folder_wot+"Jordan, Robert - 10 - Crossroads of Twilight.epub"},
-                            {"title": "", "book_num": 11,
-                    "filename": folder_wot+"Jordan, Robert - 11 - Knife of Dreams.epub"},
-                            {"title": "", "book_num": 12,
-                    "filename": folder_wot+"Jordan, Robert - 12 - The Gathering Storm.epub"},
-                            {"title": "", "book_num": 13,
-                    "filename": folder_wot+"Jordan, Robert - 13 - Towers of Midnight.epub"},
-                            {"title": "", "book_num": 14,
-                    "filename": folder_wot+"Jordan, Robert - 14 - A Memory of Light.epub"}
-                            ]},
-                    "Lord of the Rings": {
-                        "books":[{"title": "The Fellowship of the Ring",
-                                "book_num": 1,
-                                "filename": "TBD1.epub",
-                                "file_type": "epub",
-                                "chapters": [{"name": "Ch 1", "text": "So it begins"},
-                                            {"name": "Ch 2", "text": "More happens"}]},
-                            {"title": "The Two Towers",
-                                    "book_num": 2,
-                                    "filename": "TBD2.epub",
-                                    "file_type": "epub",
-                                    "chapters": [{"name": "Ch 1", "text": "So it begins"},
-                                                {"name": "Ch 2", "text": "More happens"},
-                                                {"name": "Ch 3", "text": "So it begins"}]},
-                            {"title": "The Return of the King",
-                                    "book_num": 3,
-                                    "filename": "TBD3.epub",
-                                    "file_type": "epub",
-                                    "chapters": [{"name": "Ch 1", "text": "So it begins"},
-                                                {"name": "Ch 2", "text": "More happens"},
-                                                {"name": "Ch 3", "text": "So it begins"},
-                                                {"name": "Ch 4", "text": "So it begins"}]},
-                            ]},
-                    "Harry Potter":{
-                        "books":[{"title": "Philosopher's Stone",
-                                "book_num": 1,
-                                "filename": "TBD1.epub",
-                                "file_type": "epub",
-                                "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
-                            {"title": "Chamber of Secrets",
-                                    "book_num": 2,
-                                    "filename": "TBD2.epub",
-                                    "file_type": "epub",
-                                    "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
-                            {"title": "Prisoner of Azkaban",
-                                    "book_num": 3,
-                                    "filename": "TBD3.epub",
-                                    "file_type": "epub",
-                                    "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
-                            {"title": "Goblet of Fire",
-                                    "book_num": 4,
-                                    "filename": "TBD4.epub",
-                                    "file_type": "epub",
-                                    "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
-                            {"title": "Order of the Phoenix",
-                                    "book_num": 5,
-                                    "filename": "TBD5.epub",
-                                    "file_type": "epub",
-                                    "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
-                            {"title": "Half-Blood Prince",
-                                    "book_num": 6,
-                                    "filename": "TBD6.epub",
-                                    "file_type": "epub",
-                                    "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
-                            {"title": "Deathly Hallows",
-                                    "book_num": 7,
-                                    "filename": "TBD7.epub",
-                                    "file_type": "epub",
-                                    "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
-                            ]},}
+        "books":[{"title": "", "book_num": 1,
+                "filename": folder_wot+"Jordan, Robert - 01 - The Eye of the World.epub",
+                "include_secs": [6]+list(range(8,61)),
+                "sec_bs_tags": {'element':"p", 'class': ["h4","h3 sgc-2", "tx15 sgc-2"]}},
+            {"title": "", "book_num": 2,
+                "filename": folder_wot+"Jordan, Robert - 02 - The Great Hunt.epub",
+                "include_secs": list(range(9,60)),
+                "sec_bs_tags": {'element':"p", 'class': ["h47", "tx428 sgc-2", "tx428"]}},
+            {"title": "", "book_num": 3,
+                "filename": folder_wot+"Jordan, Robert - 03 - The Dragon Reborn.epub",
+                "include_secs": list(range(9,66)),
+                "sec_bs_tags": {'element':"h2", 'class': ["h2", "h2a"]}},
+            {"title": "", "book_num": 4,
+                "filename": folder_wot+"Jordan, Robert - 04 - The Shadow Rising.epub",
+                "include_secs": list(range(9,67)),
+                "sec_bs_tags": {'element':"h2", 'class': ["h2", "h2a"]}},
+            {"title": "", "book_num": 5,
+                "filename": folder_wot+"Jordan, Robert - 05 - The Fires of Heaven.epub",
+                "include_secs": list(range(9,66)),
+                "sec_bs_tags": {'element':["h2", "h3"], 'class':["h2", "h3"]}},
+            {"title": "", "book_num": 6,
+                "filename": folder_wot+"Jordan, Robert - 06 - Lord of Chaos.epub",
+                "include_secs": list(range(9,66)),
+                "sec_bs_tags": {'element':["h2"], 'class':["h2", "h2a", "h2c"]}},
+            {"title": "", "book_num": 7,
+                "filename": folder_wot+"Jordan, Robert - 07 - A Crown of Swords.epub"},
+            {"title": "", "book_num": 8,
+                "filename": folder_wot+"Jordan, Robert - 08 - The Path of Daggers.epub"},
+            {"title": "", "book_num": 9,
+                "filename": folder_wot+"Jordan, Robert - 09 - Winter's Heart.epub"},
+            {"title": "", "book_num": 10,
+                "filename": folder_wot+"Jordan, Robert - 10 - Crossroads of Twilight.epub"},
+            {"title": "", "book_num": 11,
+                "filename": folder_wot+"Jordan, Robert - 11 - Knife of Dreams.epub"},
+            {"title": "", "book_num": 12,
+                "filename": folder_wot+"Jordan, Robert - 12 - The Gathering Storm.epub"},
+            {"title": "", "book_num": 13,
+                "filename": folder_wot+"Jordan, Robert - 13 - Towers of Midnight.epub"},
+            {"title": "", "book_num": 14,
+                "filename": folder_wot+"Jordan, Robert - 14 - A Memory of Light.epub"}
+            ]},
+    "Lord of the Rings": {
+        "books":[{"title": "The Fellowship of the Ring",
+                "book_num": 1,
+                "filename": "TBD1.epub",
+                "file_type": "epub",
+                "chapters": [{"name": "Ch 1", "text": "So it begins"},
+                            {"name": "Ch 2", "text": "More happens"}]},
+            {"title": "The Two Towers",
+                    "book_num": 2,
+                    "filename": "TBD2.epub",
+                    "file_type": "epub",
+                    "chapters": [{"name": "Ch 1", "text": "So it begins"},
+                                {"name": "Ch 2", "text": "More happens"},
+                                {"name": "Ch 3", "text": "So it begins"}]},
+            {"title": "The Return of the King",
+                    "book_num": 3,
+                    "filename": "TBD3.epub",
+                    "file_type": "epub",
+                    "chapters": [{"name": "Ch 1", "text": "So it begins"},
+                                {"name": "Ch 2", "text": "More happens"},
+                                {"name": "Ch 3", "text": "So it begins"},
+                                {"name": "Ch 4", "text": "So it begins"}]},
+            ]},
+    "Harry Potter":{
+        "books":[{"title": "Philosopher's Stone",
+                "book_num": 1,
+                "filename": "TBD1.epub",
+                "file_type": "epub",
+                "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
+            {"title": "Chamber of Secrets",
+                    "book_num": 2,
+                    "filename": "TBD2.epub",
+                    "file_type": "epub",
+                    "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
+            {"title": "Prisoner of Azkaban",
+                    "book_num": 3,
+                    "filename": "TBD3.epub",
+                    "file_type": "epub",
+                    "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
+            {"title": "Goblet of Fire",
+                    "book_num": 4,
+                    "filename": "TBD4.epub",
+                    "file_type": "epub",
+                    "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
+            {"title": "Order of the Phoenix",
+                    "book_num": 5,
+                    "filename": "TBD5.epub",
+                    "file_type": "epub",
+                    "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
+            {"title": "Half-Blood Prince",
+                    "book_num": 6,
+                    "filename": "TBD6.epub",
+                    "file_type": "epub",
+                    "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
+            {"title": "Deathly Hallows",
+                    "book_num": 7,
+                    "filename": "TBD7.epub",
+                    "file_type": "epub",
+                    "chapters": [{"name": "Ch 1", "text": "So it begins"}]},
+            ]},}
 
 
-def extract_chapters(file_loader_obj, secs = None, method_label = None, title_bs_tags = None):
-    # Takes a file_loader and extracts chapter data from specified sections
-    book = epub.read_epub(file_loader_obj)
-    items = list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
-    if secs == None:
-        secs = range(len(items))
-
-    all_ch_data = []
-    for i in secs:
-        # print(i)
-        ch_data = extract_ch_data(items[i].get_body_content(), 
-                                    method_label=method_label,
-                                    title_bs_tags=title_bs_tags)
-        ch_data["bs_sec"] = i
-        # print(ch_data['name'])
-        all_ch_data.append(ch_data)
-    return all_ch_data
-
-def extract_ch_data(html, method_label = None, title_bs_tags = None):
-    # Takes HTML and returns the title
-    soup = BeautifulSoup(html, 'html.parser')
-    # text = soup.find_all(text=True)
-    # text = soup.get_text()
-
-    if method_label == "WoT1":
-        # Extract ch title elements using the tags passed
-        ch_title_elements = soup.find_all(title_bs_tags['element'], {'class':title_bs_tags['class']})
-        ch_title = [item.text.strip() for item in ch_title_elements]
-        # Extract all the body text (everything after last element of ch title)
-        all_text = soup.get_text() 
-        ch_text = all_text[all_text.find(ch_title[-1])+len(ch_title[-1]):].strip()
-        #ch_text = ch_text[0:25]+'  ...  '+ch_text[-25:]
-        # Cleaning titles (must do after getting rest of text, or it won't match title found in text)
-        ch_title = [' '.join([wd.strip() for wd in text.split()]) for text in ch_title]
-        # Assemble chapter info dict
-        ch_data = {"name": " ".join(ch_title), "text": ch_text}
-    return ch_data
+def parse_preload(series_name, book_subset = None):
+    # Verify that the name is recognized
+    assert series_name in preloaded_dicts.keys(), f"preload series {series_name} not found."
+    # If book_subset is not passed set it to all books found in the series
+    if book_subset is None:
+        book_subset = list(range(0,len(preloaded_dicts[series_name]["books"])))
+    # Check that book_subset is in range
+    assert(max(book_subset) < len(preloaded_dicts[series_name]["books"])), f"Book subet ({book_subset}) out of range"
+    assert(0 <= min(book_subset)), f"Book subet ({book_subset}) out of range"
+    
+    # Load metadata from all book in series
+    for book_dict in preloaded_dicts[series_name]["books"]:
+        # Set some of the basic book attributes
+        file_path = book_dict["filename"]
+        book = epub.read_epub(file_path)
+        book_dict["title"] = book.get_metadata("DC", "title")[0][0]
+        book_dict["file_type"] = file_path[file_path.find(".")+1:]
+        book_dict["chapters"] = [{'name':"TBD", 'text':"",'bs_sec':0}]
+    
+    # Load chapter data only for those in the subset
+    for book_dict in [preloaded_dicts[series_name]["books"][i] for i in book_subset]:
+        # Grab the filename and some metatdata
+        file_path = book_dict["filename"]
+        book_num = book_dict['book_num']
+        # Extract the chapters
+        ch_data = extract_chapters(file_path, secs = book_dict["include_secs"], 
+                                    method_label = "WoT1",
+                                    title_bs_tags = book_dict["sec_bs_tags"])
+        book_dict["chapters"] = ch_data
 
 
-wot_sec_dicts = {1:[6]+list(range(8,61)),
-                2: list(range(9,60)),
-                3: list(range(9,66)),
-                4: list(range(9,67)),
-                5: list(range(9,66)),
-                6: list(range(9,66))}
-wot_mlabels = {1:"WoT1", 2:"WoT1", 3:"WoT1", 4:"WoT1",
-                5:"WoT1", 6:"WoT1"}
-wot_bs_tags = {1:{'element':"p", 'class': ["h4","h3 sgc-2", "tx15 sgc-2"]},
-                2: {'element':"p", 'class': ["h47", "tx428 sgc-2", "tx428"]},
-                3: {'element':"h2", 'class': ["h2", "h2a"]},
-                4: {'element':"h2", 'class': ["h2", "h2a"]},
-                5: {'element':["h2", "h3"], 'class':["h2", "h3"]},
-                6: {'element':["h2"], 'class':["h2", "h2a", "h2c"]}}
+
+parse_preload("Wheel of Time", [0,1,2,3,4,5] )
 
 
-# Extract chapters from each books of WoT
 series_index = "Wheel of Time"
-for book_dict in preloaded_dicts[series_index]["books"]:
-    # Set some of the basic book attributes
-    file_path = book_dict["filename"]
-    book = epub.read_epub(file_path)
-    book_dict["title"] = book.get_metadata("DC", "title")[0][0]
-    book_dict["file_type"] = file_path[file_path.find(".")+1:]
-    book_dict["chapters"] = [{'name':"TBD", 'text':"",'bs_sec':0}]
-
-for book_dict in preloaded_dicts[series_index]["books"][0:6]:#0,1,2,3,4]: #[0,1,2]:
-    # Grab the filename and some metatdata
-    file_path = book_dict["filename"]
-    book_num = book_dict['book_num']
-    # file_full_path = folder_wot+filename
-    # Extract the chapters
-    ch_data = extract_chapters(file_path, secs = wot_sec_dicts[book_num], 
-                                method_label = wot_mlabels[book_num],
-                                title_bs_tags = wot_bs_tags[book_num])
-    # print(ch_data)
-    # print(" ")
-    book_dict["chapters"] = ch_data
-
-
-book_index = 4
+book_index = 5
 
 file_loader_obj1 = preloaded_dicts[series_index]["books"][book_index-1]["filename"]
 book = epub.read_epub(file_loader_obj1)
 items = list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
 
 # WoT #1 starts on sec 7 (ie sec 6 is the prologue, sec 7 is ch 1)
-sec = 55
+sec = 66
 
 # print(book.get_metadata("DC", "title")[0][0])
 
