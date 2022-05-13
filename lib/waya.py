@@ -85,12 +85,12 @@ with st.sidebar:
         series_choice = st.selectbox("Pick a preloaded series:", preload_names)
         # Grab the dictionary associated with the chosen series
         if series_choice != "--":
-        preload_dict = preloaded_dicts[series_choice]
-        all_books = preload_dict['books']
+            preload_dict = preloaded_dicts[series_choice]
+            all_books = preload_dict['books']
     elif preload_or_upload == "Upload your own series":
         uploaded_files = st.file_uploader("Upload a book or books (in order of reading)", 
                                     accept_multiple_files=True, type = ['txt', 'epub'])
-        # Process the loaded book files
+        # Process the loaded book files       
         for uploaded_file in uploaded_files:
             bk_data = load_book(uploaded_file)
             all_books.append(bk_data)
@@ -99,14 +99,13 @@ with st.sidebar:
     if len(all_books) == 0:
         st.title("Pick or Upload a book/series above.")
     else:
-        # Load the books (along with their associated chapters)
-        load_progress = st.progress(0)
-        with st.spinner(f'Loading books from {series_choice}...'):
-            if preload_dict['loaded'] == False :
-                parse_preload("Wheel of Time", [0,1,2,3,4,5], prog_bar=load_progress)
-                # TODO: Change so it loads the series choice once others imped (not just WoT...)
-        load_progress.empty()
-        
+        # Load the books (along with their associated chapters) if not done
+        if preload_dict['loaded'] == False :
+            load_progress = st.progress(0)
+            with st.spinner(f'Loading books from {series_choice}...'):
+                    parse_preload(series_choice, prog_bar=load_progress)
+            load_progress.empty()
+
         # Gather information on what book and chapter the user is currently reading
         st.title("Where are you currently?")
         book_names = [book["title"] for book in all_books]
@@ -118,7 +117,7 @@ with st.sidebar:
         curr_ch = st.selectbox("Chapter:", chapter_names)
         curr_ch_dict = next(ch for ch in curr_bk_chapters if ch["name"] == curr_ch)
 
-st.write(all_books)
+# st.write(all_books)
 
 
 # Main Page
