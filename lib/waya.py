@@ -100,10 +100,13 @@ with st.sidebar:
         st.title("Pick or Upload a book/series above.")
     else:
         # Load the books (along with their associated chapters)
+        load_progress = st.progress(0)
         with st.spinner(f'Loading books from {series_choice}...'):
             if preload_dict['loaded'] == False :
-                parse_preload("Wheel of Time", [0,5])
+                parse_preload("Wheel of Time", [0,1,2,3,4,5], prog_bar=load_progress)
                 # TODO: Change so it loads the series choice once others imped (not just WoT...)
+        load_progress.empty()
+        
         # Gather information on what book and chapter the user is currently reading
         st.title("Where are you currently?")
         book_names = [book["title"] for book in all_books]

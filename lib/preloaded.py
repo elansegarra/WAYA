@@ -110,7 +110,7 @@ preloaded_dicts = {
             ]},}
 
 
-def parse_preload(series_name, book_subset = None):
+def parse_preload(series_name, book_subset = None, prog_bar = None):
     # Verify that the name is recognized
     assert series_name in preloaded_dicts.keys(), f"preload series {series_name} not found."
     # If book_subset is not passed set it to all books found in the series
@@ -130,7 +130,12 @@ def parse_preload(series_name, book_subset = None):
         book_dict["chapters"] = [{'name':"TBD", 'text':"",'bs_sec':0}]
     
     # Load chapter data only for those in the subset
+    prog_i = 1
     for book_dict in [preloaded_dicts[series_name]["books"][i] for i in book_subset]:
+        # Update progress bar (if passed)
+        if prog_bar is not None:
+            prog_bar.progress(prog_i/len(book_subset))
+            prog_i += 1
         # Grab the filename and some metatdata
         file_path = book_dict["filename"]
         book_num = book_dict['book_num']
