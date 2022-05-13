@@ -76,21 +76,21 @@ preloaded_dicts = preloaded.preloaded_dicts
 
 # Sidebar
 with st.sidebar:
+    all_books = []
     st.title("Which Series or Book?")
     preload_or_upload = st.radio("How to pick your series?", 
                 ["Open a preloaded series", "Upload your own series"])
     if preload_or_upload == "Open a preloaded series":
-        preload_names = list(preloaded_dicts.keys())
+        preload_names = list(["--"]+list(preloaded_dicts.keys()))
         series_choice = st.selectbox("Pick a preloaded series:", preload_names)
         # Grab the dictionary associated with the chosen series
+        if series_choice != "--":
         preload_dict = preloaded_dicts[series_choice]
         all_books = preload_dict['books']
     elif preload_or_upload == "Upload your own series":
         uploaded_files = st.file_uploader("Upload a book or books (in order of reading)", 
                                     accept_multiple_files=True, type = ['txt', 'epub'])
         # Process the loaded book files
-        book_names = []
-        all_books = []
         for uploaded_file in uploaded_files:
             bk_data = load_book(uploaded_file)
             all_books.append(bk_data)
