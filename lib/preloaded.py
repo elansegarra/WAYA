@@ -5,8 +5,9 @@ from epub_parser import extract_ch_data, extract_chapters
 
 # Defining the preloaded series and associated files
 folder_wot = "C:\\Users\\Phoenix\\Documents\\Literature\\Fiction\\Robert Jordan\\"
+folder_tolkien = "C:\\Users\\Phoenix\\Documents\\Literature\\Fiction\\Tolkien\\"
 preloaded_dicts = {
-    "Wheel of Time":{ "loaded": False,
+    "Wheel of Time":{ "loaded": False, "books_ready": [0,1,8],
         "books":[{"title": "", "book_num": 1,
                 "filename": folder_wot+"Jordan, Robert - 01 - The Eye of the World.epub",
                 "include_secs": [6]+list(range(8,61)),
@@ -54,30 +55,27 @@ preloaded_dicts = {
             {"title": "", "book_num": 14,
                 "filename": folder_wot+"Jordan, Robert - 14 - A Memory of Light.epub"}
             ]},
-    "Lord of the Rings": { "loaded": False,
-        "books":[{"title": "The Fellowship of the Ring",
-                "book_num": 1,
-                "filename": "TBD1.epub",
+    "Lord of the Rings": { "loaded": False, "books_ready": [],
+        "books":[{"title": "The Fellowship of the Ring", "book_num": 1,
+                "filename": folder_tolkien+"Lord of the Rings - 01 - The Fellowship of the Ring - J. R. R. Tolkien.epub",
                 "file_type": "epub",
                 "chapters": [{"name": "Ch 1", "text": "So it begins"},
                             {"name": "Ch 2", "text": "More happens"}]},
-            {"title": "The Two Towers",
-                    "book_num": 2,
-                    "filename": "TBD2.epub",
+            {"title": "The Two Towers", "book_num": 2,
+                    "filename": folder_tolkien+"Lord of the Rings - 02 - The Two Towers - J. R. R. Tolkien.epub",
                     "file_type": "epub",
                     "chapters": [{"name": "Ch 1", "text": "So it begins"},
                                 {"name": "Ch 2", "text": "More happens"},
                                 {"name": "Ch 3", "text": "So it begins"}]},
-            {"title": "The Return of the King",
-                    "book_num": 3,
-                    "filename": "TBD3.epub",
+            {"title": "The Return of the King", "book_num": 3,
+                    "filename": folder_tolkien+"Lord of the Rings - 03 - The Return of the King - J. R. R. Tolkien.epub",
                     "file_type": "epub",
                     "chapters": [{"name": "Ch 1", "text": "So it begins"},
                                 {"name": "Ch 2", "text": "More happens"},
                                 {"name": "Ch 3", "text": "So it begins"},
                                 {"name": "Ch 4", "text": "So it begins"}]},
             ]},
-    "Harry Potter":{ "loaded": False,
+    "Harry Potter":{ "loaded": False, "books_ready": [],
         "books":[{"title": "Philosopher's Stone",
                 "book_num": 1,
                 "filename": "TBD1.epub",
@@ -121,7 +119,9 @@ def parse_preload(series_name, book_subset = None, prog_bar = None):
     assert series_name in preloaded_dicts.keys(), f"preload series {series_name} not found."
     # If book_subset is not passed set it to all books found in the series
     if book_subset is None:
-        book_subset = list(range(0,len(preloaded_dicts[series_name]["books"])))
+        # book_subset = list(range(0,len(preloaded_dicts[series_name]["books"])))
+        book_subset = preloaded_dicts[series_name]["books_ready"]
+        if len(book_subset) == 0: return
     # Check that book_subset is in range
     assert(max(book_subset) < len(preloaded_dicts[series_name]["books"])), f"Book subet ({book_subset}) out of range"
     assert(0 <= min(book_subset)), f"Book subet ({book_subset}) out of range"
