@@ -1,9 +1,9 @@
 # WAYA: Who Are You Again?
 **Spoiler free book searches**
 
-Have you ever been reading a book and come across a character that made you ask "Who Are you Again?", but then been afraid to search for infomation online in case it lead to spoilers?
+Have you ever been reading a book and come across a character that made you ask "Who are you again?", but then been afraid to search for infomation online in case it lead to spoilers?
 
-WAYA is here to help you search through the text of a book or series for past references without worrying about stumbling on passages you have not read yet.
+WAYA is here to jog your memory by searching through the text of a book or series for past references without showing you passages you haven't read yet. WAYA is perfect for those book series with gazillions of different characters (I'm looking at you Wheel of Time with your 2,782 distinct characters). 
 
 Check out the live version of this application here!
 
@@ -14,4 +14,4 @@ The process is quick and easy:
 
 WAYA Features:
  - Several preloaded book series.
- - Flexibility to see context around search terms.
+ - Flexibility to adjust the context window around search terms.
