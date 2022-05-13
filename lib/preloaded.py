@@ -6,7 +6,7 @@ from epub_parser import extract_ch_data, extract_chapters
 # Defining the preloaded series and associated files
 folder_wot = "C:\\Users\\Phoenix\\Documents\\Literature\\Fiction\\Robert Jordan\\"
 preloaded_dicts = {
-    "Wheel of Time":{ 
+    "Wheel of Time":{ "loaded": False,
         "books":[{"title": "", "book_num": 1,
                 "filename": folder_wot+"Jordan, Robert - 01 - The Eye of the World.epub",
                 "include_secs": [6]+list(range(8,61)),
@@ -48,7 +48,7 @@ preloaded_dicts = {
             {"title": "", "book_num": 14,
                 "filename": folder_wot+"Jordan, Robert - 14 - A Memory of Light.epub"}
             ]},
-    "Lord of the Rings": {
+    "Lord of the Rings": { "loaded": False,
         "books":[{"title": "The Fellowship of the Ring",
                 "book_num": 1,
                 "filename": "TBD1.epub",
@@ -71,7 +71,7 @@ preloaded_dicts = {
                                 {"name": "Ch 3", "text": "So it begins"},
                                 {"name": "Ch 4", "text": "So it begins"}]},
             ]},
-    "Harry Potter":{
+    "Harry Potter":{ "loaded": False,
         "books":[{"title": "Philosopher's Stone",
                 "book_num": 1,
                 "filename": "TBD1.epub",
@@ -139,10 +139,10 @@ def parse_preload(series_name, book_subset = None):
                                     method_label = "WoT1",
                                     title_bs_tags = book_dict["sec_bs_tags"])
         book_dict["chapters"] = ch_data
+    
+    # Turn on flag indicating the series has been loaded
+    preloaded_dicts[series_name]["loaded"] = True
 
-
-
-parse_preload("Wheel of Time", [0,1,2,3,4,5] )
 
 
 series_index = "Wheel of Time"

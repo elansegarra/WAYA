@@ -6,6 +6,7 @@ from ebooklib import epub
 import preloaded
 import re
 from PIL import Image
+from preloaded import parse_preload
 
 # To run from command line: "streamlit run waya.py --server.port 8889"
 
@@ -80,9 +81,9 @@ with st.sidebar:
                 ["Open a preloaded series", "Upload your own series"])
     if preload_or_upload == "Open a preloaded series":
         preload_names = list(preloaded_dicts.keys())
-        preload_choice = st.selectbox("Pick a preloaded series:", preload_names)
+        series_choice = st.selectbox("Pick a preloaded series:", preload_names)
         # Grab the dictionary associated with the chosen series
-        preload_dict = preloaded_dicts[preload_choice]
+        preload_dict = preloaded_dicts[series_choice]
         all_books = preload_dict['books']
     elif preload_or_upload == "Upload your own series":
         uploaded_files = st.file_uploader("Upload a book or books (in order of reading)", 
@@ -98,6 +99,12 @@ with st.sidebar:
     if len(all_books) == 0:
         st.title("Pick or Upload a book/series above.")
     else:
+        # Load the books (along with their associated chapters)
+        with st.spinner(f'Loading books from {series_choice}...'):
+            if preload_dict['loaded'] == False :
+                parse_preload("Wheel of Time", [0,5])
+                # TODO: Change so it loads the series choice once others imped (not just WoT...)
+        # Gather information on what book and chapter the user is currently reading
         st.title("Where are you currently?")
         book_names = [book["title"] for book in all_books]
         curr_book = st.selectbox("Book:", book_names)
@@ -108,7 +115,7 @@ with st.sidebar:
         curr_ch = st.selectbox("Chapter:", chapter_names)
         curr_ch_dict = next(ch for ch in curr_bk_chapters if ch["name"] == curr_ch)
 
-# st.write(all_books)
+st.write(all_books)
 
 
 # Main Page
