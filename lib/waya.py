@@ -135,6 +135,10 @@ with st.sidebar:
         curr_ch = st.selectbox("Chapter:", chapter_names)
         curr_ch_dict = next(ch for ch in curr_bk_chapters if ch["name"] == curr_ch)
 
+        # Controls for the search results
+        st.title("Result Display Controls")
+        context_radius = st.slider("Context radius (measured in letters):",
+                                min_value = 10, max_value = 500, value = 100)
 # st.write(all_books)
 
 
@@ -150,7 +154,6 @@ else:
     if search_value != "":
         # res_window.text(f'The search term is "{search_value}"')
 
-        context_range = 150
         search_res = []
         for book in all_books:
             # Skip searching all books after the book currently being read
@@ -161,12 +164,12 @@ else:
                 if curr_reading_this_book & (ch['bs_sec'] >= curr_ch_dict['bs_sec']): break
                 # Go through each instance of finding the esarch term
                 for res in re.finditer(search_value, ch['text'],flags=re.IGNORECASE):
-                    res_start = max(0,res.start()-context_range)
-                    res_end = res.start()+context_range+len(search_value)
+                    res_start = max(0,res.start()-context_radius)
+                    res_end = res.start()+context_radius+len(search_value)
                     context = ch['text'][res_start:res_end]
                     # Check if overlap with previous result instance
                     contexts_overlap = ( (len(search_res) > 0) and 
-                        (res_start - search_res[-1]["res_ind_start"] <= context_range + len(search_value)) )
+                        (res_start - search_res[-1]["res_ind_start"] <= context_radius + len(search_value)) )
                     same_bk_ch = ( (len(search_res) > 0) and 
                         (search_res[-1]["book"] == book["title"]) and 
                         (search_res[-1]["chapter"] == ch["name"]) )
