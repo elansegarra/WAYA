@@ -4,7 +4,8 @@ from bs4 import BeautifulSoup
 from numpy import median
 
 
-def extract_chapters(file_loader_obj, secs = None, method_label = None, title_bs_tags = None):
+def extract_chapters(file_loader_obj, secs = None, method_label = None, 
+                    title_bs_tags = None, prog = None):
     # Takes a file_loader and extracts chapter data from specified sections
     book = epub.read_epub(file_loader_obj)
     items = list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
@@ -12,14 +13,20 @@ def extract_chapters(file_loader_obj, secs = None, method_label = None, title_bs
         secs = range(len(items))
 
     all_ch_data = []
-    for i in secs:
+    for sec in secs:
         # print(i)    
-        ch_data = extract_ch_data(items[i].get_body_content(), 
+        ch_data = extract_ch_data(items[sec].get_body_content(), 
                                     method_label=method_label,
                                     title_bs_tags=title_bs_tags)
-        ch_data["bs_sec"] = i
+        ch_data["bs_sec"] = sec
         # print(ch_data['name'])
         all_ch_data.append(ch_data)
+        # Update the progress bar (if passed)
+        if prog is not None:
+            num_secs_done = secs.index(sec)+1
+            prog_curr = prog["prog_curr"] + prog["bk_contrib"]*num_secs_done/len(secs)
+            prog_curr = min(prog_curr, 1)
+            prog["st_prog"].progress(prog_curr)
     return all_ch_data
 
 def extract_ch_data(html, method_label = None, title_bs_tags = None):

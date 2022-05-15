@@ -7,8 +7,9 @@ import preloaded
 import re
 from PIL import Image
 from preloaded import parse_preload
+import time
 
-# To run from command line: "streamlit run waya.py --server.port 8889"
+# To run from command line (in lib folder): "streamlit run waya.py --server.port 8889"
 
 im = Image.open("../img/read-book-32x32.png")
 st.set_page_config(page_title="WAYA: Who Are You Again?", page_icon=im, 
@@ -103,7 +104,8 @@ with st.sidebar:
         if preload_dict['loaded'] == False :
             load_progress = st.progress(0)
             with st.spinner(f'Loading books from {series_choice}...'):
-                    parse_preload(series_choice, prog_bar=load_progress)
+                parse_preload(series_choice, prog_bar=load_progress)
+            time.sleep(0.5)
             load_progress.empty()
 
         # Gather information on what book and chapter the user is currently reading

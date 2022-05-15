@@ -135,21 +135,26 @@ def parse_preload(series_name, book_subset = None, prog_bar = None):
         book_dict["file_type"] = file_path[file_path.find(".")+1:]
         book_dict["chapters"] = [{'name':"TBD", 'text':"",'bs_sec':0}]
     
+    # Create dict for tracking progress if progress bar passed
+    prog_dict = None
+    if prog_bar is not None:
+        prog_dict = {"st_prog":prog_bar, 
+                    "bk_contrib":1/len(book_subset),
+                    "prog_curr": 0}
     # Load chapter data only for those in the subset
-    prog_i = 1
     for book_dict in [preloaded_dicts[series_name]["books"][i] for i in book_subset]:
-        # Update progress bar (if passed)
-        if prog_bar is not None:
-            prog_bar.progress(prog_i/len(book_subset))
-            prog_i += 1
         # Grab the filename and some metatdata
         file_path = book_dict["filename"]
         book_num = book_dict['book_num']
         # Extract the chapters
         ch_data = extract_chapters(file_path, secs = book_dict["include_secs"], 
                                     method_label = "WoT1",
-                                    title_bs_tags = book_dict["sec_bs_tags"])
+                                    title_bs_tags = book_dict["sec_bs_tags"],
+                                    prog = prog_dict)
         book_dict["chapters"] = ch_data
+        # Update progress bar (if passed)
+        if prog_bar is not None:
+            prog_dict["prog_curr"] += 1/len(book_subset)
     
     # Turn on flag indicating the series has been loaded
     preloaded_dicts[series_name]["loaded"] = True
