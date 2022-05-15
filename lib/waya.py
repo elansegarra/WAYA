@@ -138,7 +138,10 @@ with st.sidebar:
         # Controls for the search results
         st.title("Result Display Controls")
         context_radius = st.slider("Context radius (measured in letters):",
-                                min_value = 10, max_value = 500, value = 100)
+                                min_value = 10, max_value = 500, value = 100, step=10)
+        group_res_by = st.radio("Group results by:", ["Book", "Chapter"])
+        # group_chs_true = st.checkbox("Group results by chapter", value=False)
+
 # st.write(all_books)
 
 
@@ -188,25 +191,44 @@ else:
         # Result title with total results found
         res_window.title(f"Results ({len(search_res)} instances found)")
         
-        # Displaying the search results, grouped by book
-        book_res = ""
+        # Displaying the search results, grouped by book (and by ch is specified)
+        book_res_cur = None
+        ch_res_cur = None
         if len(search_res)>0:
-            # Inserting results into dataframe and creating dictionary of coutns by book
+            # Inserting results into dataframe and creating dictionary of counts by book and chapter
             res_df = pd.DataFrame(search_res)
             res_counts = res_df.groupby(by='book').agg('count')['context'].to_dict()
+            res_counts_ch = res_df.groupby(by=['book','chapter']).agg('count')['context'].to_dict()
 
+            # Iterate over results to display each
             for res_item in search_res:
                 # Skip if flagged due to overlapping contexts
                 if res_item["overlap"]: continue
-                # Display book heading if different from past
-                if book_res != res_item['book']:
-                    book_res = res_item['book']
-                    book_res_exp = res_window.expander(f"{res_item['book']} ({res_counts[book_res]} results found)")
-                    
+                # Display book or chapter headings depending on choice
+                if group_res_by == "Chapter":
+                    # Check if the book has changed
+                    if book_res_cur != res_item['book']:
+                        book_res_cur = res_item['book']
+                        ch_res_cur = None
+                        res_window.write(f"{book_res_cur} ({res_counts[book_res_cur]} results found)")
+                    # Check if chapter has changed
+                    if ch_res_cur != res_item['chapter']:
+                        ch_res_cur = res_item['chapter']
+                        group_exp_text = f"{ch_res_cur} ({res_counts_ch[book_res_cur,ch_res_cur]} results found)"
+                        res_group_exp = res_window.expander(group_exp_text)    
+                elif group_res_by == "Book":
+                    # Check if the book has changed
+                    if book_res_cur != res_item['book']:
+                        book_res_cur = res_item['book']
+                        group_exp_text = f"{book_res_cur} ({res_counts[book_res_cur]} results found)"
+                        res_group_exp = res_window.expander(group_exp_text)
+                else:
+                    raise Exception(f"The value of group_res_by={group_res_by} is not recognized")
+                
                 # Display the context with search terms highlighted
                 # search_res_highlit = res_item['context'].replace(search_value, highlight)
                 search_res_highlit = search_pattern.sub(highlight, res_item['context'])
-                book_res_exp.markdown('"'+search_res_highlit+'"', unsafe_allow_html=True)
+                res_group_exp.markdown('"'+search_res_highlit+'"', unsafe_allow_html=True)
         
         # res_window.write(search_res)
 
