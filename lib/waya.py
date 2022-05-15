@@ -7,6 +7,7 @@ import preloaded
 import re
 from PIL import Image
 from preloaded import parse_preload
+from epub_parser import get_relevant_secs, extract_chapters
 import time
 
 # To run from command line (in lib folder): "streamlit run waya.py --server.port 8889"
@@ -35,23 +36,31 @@ def load_book(file_loader_obj):
 
     # Parse filetype and extract text
     file_type = file_loader_obj.name[file_loader_obj.name.find(".")+1:]
+    
     if file_type == "txt":
+        book_title = file_loader_obj.name
         all_text = file_loader_obj.read().decode('UTF-8')
         chapters = [{'name':"Ch 1 Who dun it?", 'text':'...'},
                     {'name':"Ch 2 But why?!", 'text':"...."} ]
         res = all_text[0:500]
     elif file_type == "epub":
         book = epub.read_epub(file_loader_obj)
-        chapters = [{'name':"Ch 1 The Story so far", 'text':'...'},
-                    {'name':"Ch 2 Something unexpected happens", 'text':"...."},
-                    {'name':"Ch 3 B/C", 'text':"...."} ]
+        book_title = book.get_metadata("DC", "title")[0][0]
+        relevant_secs = get_relevant_secs(file_loader_obj)
+        chapters = extract_chapters(file_loader_obj, secs = relevant_secs)
         res = book.get_metadata('DC', 'title')
     else:
         st.error(f"File {file_loader_obj.name} is not a recognized file type.")
         res = "ERROR DIDNT UNDERSTAND FILE TYPE"
 
+    # Check if chapters have unique titles (if not give them ids)
+    ch_titles = [ch['name'] for ch in chapters]
+    if len(set(ch_titles)) < len(ch_titles):
+        for i in range(len(chapters)): 
+            chapters[i]['name'] = str(i).zfill(2)+" "+chapters[i]['name']
+
     return {"filename": file_loader_obj.name,
-            "title": file_loader_obj.name,
+            "title": book_title,
             "file_type": file_type,
             "chapters": chapters}
 
@@ -89,12 +98,20 @@ with st.sidebar:
             preload_dict = preloaded_dicts[series_choice]
             all_books = preload_dict['books']
     elif preload_or_upload == "Upload your own series":
-        uploaded_files = st.file_uploader("Upload a book or books (in order of reading)", 
+        uploaded_files = st.file_uploader("Upload book(s) (from the same series in order of reading)", 
                                     accept_multiple_files=True, type = ['txt', 'epub'])
         # Process the loaded book files       
-        for uploaded_file in uploaded_files:
+        load_progress = st.progress(0)
+        with st.spinner(f'Loading uploaded book(s)...'):
+            for i in range(len(uploaded_files)):
+                uploaded_file = uploaded_files[i]
             bk_data = load_book(uploaded_file)
+                bk_data["book_num"] = i+1
             all_books.append(bk_data)
+                # parse_preload(series_choice, prog_bar=load_progress)
+        time.sleep(0.5)
+        load_progress.empty()
+            
 
     # Current Place Inputs (sets book names and associated chapters)    
     if len(all_books) == 0:

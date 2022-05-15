@@ -47,6 +47,31 @@ def extract_ch_data(html, method_label = None, title_bs_tags = None):
         ch_title = [' '.join([wd.strip() for wd in text.split()]) for text in ch_title]
         # Assemble chapter info dict
         ch_data = {"name": " ".join(ch_title), "text": ch_text}
+    elif title_bs_tags is not None:
+        raise NotImplementedError
+    elif method_label is None:
+        # Grab all text and split by line breaks
+        all_text = soup.get_text().split("\n")
+        # Peg first few short lines for title and rest as text
+        ch_title = ''
+        ch_text_start = -1
+        for i in range(len(all_text)):
+            # Add next line if short and if title is not already too long
+            if (len(ch_title) < 25) and (len(all_text[i]) < 50):
+                ch_title += (" "+all_text[i])
+            else:
+                ch_text_start = i
+                break
+        # Checking if either too too much or too little pulled into the title
+        if (len(ch_title) > 150) or (ch_text_start==0):
+            ch_title = "Ch Title Unknown"
+            ch_text = "\n".join(all_text)
+        else: # OTherwise we simply say rest of text is the ch text
+            ch_text = "\n".join(all_text[ch_text_start:])
+        ch_data = {"name":ch_title.strip(), "text":ch_text}
+    else:
+        raise NotImplementedError
+
     return ch_data
 
 def get_relevant_secs(epub_file):
