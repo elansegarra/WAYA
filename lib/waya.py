@@ -97,6 +97,13 @@ with st.sidebar:
         if series_choice != "--":
             preload_dict = preloaded_dicts[series_choice]
             all_books = preload_dict['books']
+            # Load the books (along with their associated chapters) if not done
+            if preload_dict['loaded'] == False :
+                load_progress = st.progress(0)
+                with st.spinner(f'Loading books from {series_choice}...'):
+                    parse_preload(series_choice, prog_bar=load_progress)
+                time.sleep(0.5)
+                load_progress.empty()
     elif preload_or_upload == "Upload your own series":
         uploaded_files = st.file_uploader("Upload book(s) (from the same series in order of reading)", 
                                     accept_multiple_files=True, type = ['txt', 'epub'])
@@ -105,9 +112,9 @@ with st.sidebar:
         with st.spinner(f'Loading uploaded book(s)...'):
             for i in range(len(uploaded_files)):
                 uploaded_file = uploaded_files[i]
-            bk_data = load_book(uploaded_file)
+                bk_data = load_book(uploaded_file)
                 bk_data["book_num"] = i+1
-            all_books.append(bk_data)
+                all_books.append(bk_data)
                 # parse_preload(series_choice, prog_bar=load_progress)
         time.sleep(0.5)
         load_progress.empty()
@@ -117,14 +124,6 @@ with st.sidebar:
     if len(all_books) == 0:
         st.title("Pick or Upload a book/series above.")
     else:
-        # Load the books (along with their associated chapters) if not done
-        if preload_dict['loaded'] == False :
-            load_progress = st.progress(0)
-            with st.spinner(f'Loading books from {series_choice}...'):
-                parse_preload(series_choice, prog_bar=load_progress)
-            time.sleep(0.5)
-            load_progress.empty()
-
         # Gather information on what book and chapter the user is currently reading
         st.title("Where are you currently?")
         book_names = [book["title"] for book in all_books]
