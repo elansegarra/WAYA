@@ -138,7 +138,8 @@ with st.sidebar:
         # Controls for the search results
         st.title("Result Display Controls")
         context_radius = st.slider("Context radius (measured in letters):",
-                                min_value = 10, max_value = 500, value = 100, step=10)
+                                min_value = 10, max_value = 500, value = 100, step=10,
+                                help="The number of letters before and after the search term that will be displayed in the results.")
         group_res_by = st.radio("Group results by:", ["Book", "Chapter"])
         # group_chs_true = st.checkbox("Group results by chapter", value=False)
 
