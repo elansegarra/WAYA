@@ -165,7 +165,7 @@ else:
                 # Skip searching all chapters after (and including) chapter currently being read
                 curr_reading_this_book = (book['book_num'] == curr_book_dict['book_num'])
                 if curr_reading_this_book & (ch['bs_sec'] >= curr_ch_dict['bs_sec']): break
-                # Go through each instance of finding the esarch term
+                # Go through each instance of finding the search term
                 for res in re.finditer(search_value, ch['text'],flags=re.IGNORECASE):
                     res_start = max(0,res.start()-context_radius)
                     res_end = res.start()+context_radius+len(search_value)
@@ -186,7 +186,9 @@ else:
 
         # Creating text with search value highlighted
         search_pattern = re.compile(search_value, re.IGNORECASE)
-        highlight = f'<span style="background-color:Yellow;">{search_value}</span>'
+        # highlight = f'<span style="background-color:Yellow;">{search_value}</span>'
+        highlight_start = '<span style="background-color:Yellow;">'
+        highlight_end = '</span>'
         
         # Result title with total results found
         res_window.title(f"Results ({len(search_res)} instances found)")
@@ -225,10 +227,17 @@ else:
                 else:
                     raise Exception(f"The value of group_res_by={group_res_by} is not recognized")
                 
-                # Display the context with search terms highlighted
-                # search_res_highlit = res_item['context'].replace(search_value, highlight)
-                search_res_highlit = search_pattern.sub(highlight, res_item['context'])
-                res_group_exp.markdown('"'+search_res_highlit+'"', unsafe_allow_html=True)
+                # Highlight the search terms in the context and display the context
+                context = res_item['context']
+                context_highlit = ""
+                i = 0
+                for m in search_pattern.finditer(context):
+                    context_highlit += "".join([context[i:m.start()], highlight_start,
+                                                context[m.start():m.end()], highlight_end])
+                    i = m.end()
+                context_highlit += context[m.end():]
+                # context_highlit = search_pattern.sub(highlight, res_item['context']) # Old way, replaces case
+                res_group_exp.markdown('"'+context_highlit+'"', unsafe_allow_html=True)
         
         # res_window.write(search_res)
 
