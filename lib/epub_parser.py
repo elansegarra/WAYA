@@ -14,8 +14,14 @@ def extract_chapters(file_loader_obj, secs = None, method_label = None,
 
     all_ch_data = []
     for sec in secs:
-        # print(i)    
-        ch_data = extract_ch_data(items[sec].get_body_content(), 
+        # Combine sections if this element is a list
+        if isinstance(sec, list):
+            sec_html = b""
+            for sec_element in sec:
+                sec_html = sec_html + items[sec_element].get_body_content()
+        else:
+            sec_html = items[sec].get_body_content()
+        ch_data = extract_ch_data(sec_html, 
                                     method_label=method_label,
                                     title_bs_tags=title_bs_tags)
         ch_data["bs_sec"] = sec
@@ -39,7 +45,8 @@ def extract_ch_data(html, method_label = None, title_bs_tags = None):
     if method_label == "WoT1":
         # Extract ch title elements using the tags passed
         ch_title_elements = soup.find_all(title_bs_tags['element'], {'class':title_bs_tags['class']})
-        ch_title = [item.text.strip() for item in ch_title_elements]
+        ch_title = [item.text.strip() for item in ch_title_elements if item.text.strip() != ""]
+        if "chapter-title" in title_bs_tags['class']: print(ch_title)
         # Extract all the body text (everything after last element of ch title)
         all_text = soup.get_text() 
         ch_text = all_text[all_text.find(ch_title[-1])+len(ch_title[-1]):].strip()
