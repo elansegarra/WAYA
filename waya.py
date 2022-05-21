@@ -3,16 +3,16 @@ import pandas as pd
 import numpy as np
 import ebooklib
 from ebooklib import epub
-import preloaded
+import lib.preloaded
 import re
 from PIL import Image
-from preloaded import parse_preload
-from epub_parser import get_relevant_secs, extract_chapters
+from lib.preloaded import parse_preload
+from lib.epub_parser import get_relevant_secs, extract_chapters
 import time
 
 # To run from command line (in lib folder): "streamlit run waya.py --server.port 8889"
 
-im = Image.open("../img/read-book-32x32.png")
+im = Image.open("res/img/read-book-32x32.png")
 st.set_page_config(page_title="WAYA: Who Are You Again?", page_icon=im, 
                     layout="centered", initial_sidebar_state="auto", menu_items=None)
 
@@ -78,7 +78,7 @@ def merge_overlapping_strings(s1, s2, min_overlap = 1):
     else:                    return(s1[:-biggest_overlap]+s2)
 
 # Grab the preloaded series information
-preloaded_dicts = preloaded.preloaded_dicts
+preloaded_dicts = lib.preloaded.preloaded_dicts
 
 ###########################################################################
 #### App Running ##########################################################
@@ -151,7 +151,7 @@ with st.sidebar:
 if len(all_books) == 0:
     st.title("Pick or Upload a book/series in the sidebar to the left.")
 else:
-    st.title("Who/What Do You Want to Search For?")
+    st.title("Who Are You Again?")
     search_value = st.text_input("Search:", placeholder="Type a name or phrase here")
 
     res_window = st.container()
