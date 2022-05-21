@@ -1,7 +1,7 @@
 import ebooklib
 from ebooklib import epub
 from bs4 import BeautifulSoup
-# import numpy as np
+from numpy import log10
 
 
 def extract_chapters(file_loader_obj, secs = None, title_bs_tags = None, 
@@ -31,6 +31,14 @@ def extract_chapters(file_loader_obj, secs = None, title_bs_tags = None,
             prog_curr = prog["prog_curr"] + prog["bk_contrib"]*num_secs_done/len(secs)
             prog_curr = min(prog_curr, 1)
             prog["st_prog"].progress(prog_curr)
+
+    # Check if chapters have unique titles (if not give them ids)
+    ch_titles = [ch['name'] for ch in all_ch_data]
+    if len(set(ch_titles)) < len(ch_titles):
+        num_digits = int(log10(len(ch_titles))+1)
+        for i in range(len(all_ch_data)): 
+            all_ch_data[i]['name'] = str(i).zfill(num_digits)+" "+all_ch_data[i]['name']
+
     return all_ch_data
 
 def extract_ch_data(html, title_bs_tags = None):
