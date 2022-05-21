@@ -7,23 +7,23 @@ from lib.epub_parser import extract_ch_data, extract_chapters
 folder_wot = "C:\\Users\\Phoenix\\Documents\\Literature\\Fiction\\Robert Jordan\\"
 preload_folder = "res\\preloads\\"
 preloaded_dicts = {
-    "War and Peace":{ "loaded": False, "books_ready": [],
+    "War and Peace":{ "loaded": False, "books_ready": [0],
         "books":[{"title": "", "book_num": 1,
                 "filename": preload_folder+"[Tolstoy] War and Peace.epub",
-                "include_secs": [0,1,2],
-                "sec_bs_tags": {'element':"p", 'class': ["h4","h3 sgc-2", "tx15 sgc-2"]}},
+                "include_secs": list(range(2,383)),
+                "sec_bs_tags": {'element':"h2", 'class': []}},
             ]},
-    "A Tale of Two Cities": { "loaded": False, "books_ready": [],
+    "A Tale of Two Cities": { "loaded": False, "books_ready": [0],
         "books":[{"title": "", "book_num": 1,
                 "filename": preload_folder+"[Dickens] A Tale of Two Cities.epub",
-                "include_secs": [0,1,2],
-                "sec_bs_tags": {'element':"p", 'class': ["h4","h3 sgc-2", "tx15 sgc-2"]}},
+                "include_secs": list(range(1,49)),
+                "sec_bs_tags": {'element':"h2", 'class': []}},
             ]},
-    "Pride and Prejudice":{ "loaded": False, "books_ready": [],
+    "Pride and Prejudice":{ "loaded": False, "books_ready": [0],
         "books":[{"title": "", "book_num": 1,
                 "filename": preload_folder+"[Austen] Pride and Prejudice.epub",
-                "include_secs": [0,1,2],
-                "sec_bs_tags": {'element':"p", 'class': ["h4","h3 sgc-2", "tx15 sgc-2"]}},
+                "include_secs": list(range(1,62)),
+                "sec_bs_tags": {'element':"h2", 'class': []}},
             ]},
     }
 
