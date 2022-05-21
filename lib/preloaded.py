@@ -158,7 +158,6 @@ def parse_preload(series_name, book_subset = None, prog_bar = None):
         book_num = book_dict['book_num']
         # Extract the chapters
         ch_data = extract_chapters(file_path, secs = book_dict["include_secs"], 
-                                    method_label = "WoT1",
                                     title_bs_tags = book_dict["sec_bs_tags"],
                                     prog = prog_dict)
         book_dict["chapters"] = ch_data

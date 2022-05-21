@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 # import numpy as np
 
 
-def extract_chapters(file_loader_obj, secs = None, method_label = None, 
-                    title_bs_tags = None, prog = None):
+def extract_chapters(file_loader_obj, secs = None, title_bs_tags = None, 
+                        prog = None):
     # Takes a file_loader and extracts chapter data from specified sections
     book = epub.read_epub(file_loader_obj)
     items = list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
@@ -21,9 +21,7 @@ def extract_chapters(file_loader_obj, secs = None, method_label = None,
                 sec_html = sec_html + items[sec_element].get_body_content()
         else:
             sec_html = items[sec].get_body_content()
-        ch_data = extract_ch_data(sec_html, 
-                                    method_label=method_label,
-                                    title_bs_tags=title_bs_tags)
+        ch_data = extract_ch_data(sec_html, title_bs_tags=title_bs_tags)
         ch_data["bs_sec"] = sec
         # print(ch_data['name'])
         all_ch_data.append(ch_data)
@@ -35,18 +33,18 @@ def extract_chapters(file_loader_obj, secs = None, method_label = None,
             prog["st_prog"].progress(prog_curr)
     return all_ch_data
 
-def extract_ch_data(html, method_label = None, title_bs_tags = None):
+def extract_ch_data(html, title_bs_tags = None):
     # Takes HTML and returns the title
 
     soup = BeautifulSoup(html, 'html.parser')
     # text = soup.find_all(text=True)
     # text = soup.get_text()
 
-    if method_label == "WoT1":
+    if title_bs_tags is not None:
         # Extract ch title elements using the tags passed
         ch_title_elements = soup.find_all(title_bs_tags['element'], {'class':title_bs_tags['class']})
         ch_title = [item.text.strip() for item in ch_title_elements if item.text.strip() != ""]
-        if "chapter-title" in title_bs_tags['class']: print(ch_title)
+        # if "chapter-title" in title_bs_tags['class']: print(ch_title)
         # Extract all the body text (everything after last element of ch title)
         all_text = soup.get_text() 
         ch_text = all_text[all_text.find(ch_title[-1])+len(ch_title[-1]):].strip()
@@ -55,9 +53,7 @@ def extract_ch_data(html, method_label = None, title_bs_tags = None):
         ch_title = [' '.join([wd.strip() for wd in text.split()]) for text in ch_title]
         # Assemble chapter info dict
         ch_data = {"name": " ".join(ch_title), "text": ch_text}
-    elif title_bs_tags is not None:
-        raise NotImplementedError
-    elif method_label is None:
+    else:
         # Grab all text and split by line breaks
         all_text = soup.get_text().split("\n")
         # Peg first few short lines for title and rest as text
@@ -77,8 +73,6 @@ def extract_ch_data(html, method_label = None, title_bs_tags = None):
         else: # OTherwise we simply say rest of text is the ch text
             ch_text = "\n".join(all_text[ch_text_start:])
         ch_data = {"name":ch_title.strip(), "text":ch_text}
-    else:
-        raise NotImplementedError
 
     return ch_data
 
