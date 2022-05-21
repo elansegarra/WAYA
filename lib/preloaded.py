@@ -28,8 +28,11 @@ preloaded_dicts = {
     }
 
 # Gather additional preloads from root/user/ (if they exist)
-import user.preloads
-preloaded_dicts.update(user.preloads.preloaded_dicts)
+try:
+    import user.preloads
+    preloaded_dicts.update(user.preloads.preloaded_dicts)
+except ImportError or ModuleNotFoundError:
+    print("No user defined preloads found")
 
 def parse_preload(series_name, book_subset = None, prog_bar = None):
     # Verify that the name is recognized
@@ -64,7 +67,7 @@ def parse_preload(series_name, book_subset = None, prog_bar = None):
         file_path = book_dict["filename"]
         book_num = book_dict['book_num']
         # Extract the chapters
-        ch_data = extract_chapters(file_path, secs = book_dict["include_secs"], 
+        ch_data = extract_chapters(file_path, secs = book_dict["include_secs"],
                                     title_bs_tags = book_dict["sec_bs_tags"],
                                     prog = prog_dict)
         book_dict["chapters"] = ch_data
@@ -74,31 +77,3 @@ def parse_preload(series_name, book_subset = None, prog_bar = None):
     
     # Turn on flag indicating the series has been loaded
     preloaded_dicts[series_name]["loaded"] = True
-
-
-
-series_index = "Wheel of Time"
-book_index = 5
-
-file_loader_obj1 = preloaded_dicts[series_index]["books"][book_index-1]["filename"]
-book = epub.read_epub(file_loader_obj1)
-items = list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
-
-# WoT #1 starts on sec 7 (ie sec 6 is the prologue, sec 7 is ch 1)
-sec = 66
-
-# print(book.get_metadata("DC", "title")[0][0])
-
-# ch_data = items[sec].get_body_content()
-
-# soup = BeautifulSoup(items[sec].get_body_content(), 'html.parser')
-# print(soup.prettify()[0:900])
-
-# ch_data = [item.text.strip() for item in soup.find_all(["h2", "h3"], {"class":["h2", "h3"]})]
-
-# all_text = soup.get_text() 
-# ch_data = all_text[all_text.find(ch_title)+len(ch_title):].strip()
-
-# print("")
-# print((ch_data[0:900]))
-
