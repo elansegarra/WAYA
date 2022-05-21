@@ -25,6 +25,18 @@ preloaded_dicts = {
                 "include_secs": list(range(1,62)),
                 "sec_bs_tags": {'element':"h2", 'class': []}},
             ]},
+    "Frankenstein": { "loaded": False, "books_ready": [0],
+        "books":[{"title": "", "book_num": 1,
+                "filename": preload_folder+"[Shelley] Frankenstein.epub",
+                "include_secs": list(range(1,29)),
+                "sec_bs_tags": {'element':"h2", 'class': []}},
+            ]},
+    "The Time Machine":{ "loaded": False, "books_ready": [0],
+        "books":[{"title": "", "book_num": 1,
+                "filename": preload_folder+"[Wells] The Time Machine.epub",
+                "include_secs": list(range(1,18)),
+                "sec_bs_tags": {'element':"h2", 'class': []}},
+            ]},
     }
 
 # Gather additional preloads from root/user/ (if they exist)
