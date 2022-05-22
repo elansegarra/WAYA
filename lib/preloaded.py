@@ -77,7 +77,8 @@ def parse_preload(series_name, book_subset = None, prog_bar = None):
         # Set some of the basic book attributes
         file_path = book_dict["filename"]
         book = epub.read_epub(file_path)
-        book_dict["title"] = book.get_metadata("DC", "title")[0][0]
+        if (book_dict["title"] == ""):
+            book_dict["title"] = book.get_metadata("DC", "title")[0][0]
         book_dict["file_type"] = file_path[file_path.find(".")+1:]
         book_dict["chapters"] = [{'name':"TBD", 'text':"",'bs_sec':0}]
     
