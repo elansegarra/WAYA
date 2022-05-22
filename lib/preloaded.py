@@ -7,6 +7,20 @@ from lib.epub_parser import extract_ch_data, extract_chapters
 folder_wot = "C:\\Users\\Phoenix\\Documents\\Literature\\Fiction\\Robert Jordan\\"
 preload_folder = "res\\preloads\\"
 preloaded_dicts = {
+    "The Divine Comedy":{ "loaded": False, "books_ready": [0,1,2],
+        "books":[{"title": "Vol 1: Inferno", "book_num": 1,
+                    "filename": preload_folder+"[Alighieri] The Divine Comedy - 1 - Hell.epub",
+                    "include_secs": list(range(1,35)),
+                    "sec_bs_tags": {'element':"h2", 'class': []}},
+                {"title": "Vol 2: Purgatorio", "book_num": 2,
+                    "filename": preload_folder+"[Alighieri] The Divine Comedy - 2 - Purgatory.epub",
+                    "include_secs": list(range(1,34)),
+                    "sec_bs_tags": {'element':"h2", 'class': []}},
+                {"title": "Vol 3: Paradiso", "book_num": 3,
+                    "filename": preload_folder+"[Alighieri] The Divine Comedy - 3 - Paradise.epub",
+                    "include_secs": list(range(1,34)),
+                    "sec_bs_tags": {'element':"h2", 'class': []}}
+            ]},
     "War and Peace":{ "loaded": False, "books_ready": [0],
         "books":[{"title": "", "book_num": 1,
                 "filename": preload_folder+"[Tolstoy] War and Peace.epub",
