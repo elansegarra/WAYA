@@ -1,6 +1,8 @@
 # Py cache files
 __pycache__/
 
+# My custom preload file
+preloads/my_preloads.py
 
 # everything in the temporary and image folder
 tmp/

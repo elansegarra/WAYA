@@ -4,8 +4,7 @@ from bs4 import BeautifulSoup
 from lib.epub_parser import extract_ch_data, extract_chapters
 
 # Defining the preloaded series and associated files
-folder_wot = "C:\\Users\\Phoenix\\Documents\\Literature\\Fiction\\Robert Jordan\\"
-preload_folder = "res\\preloads\\"
+preload_folder = "preloads\\"
 preloaded_dicts = {
     "The Divine Comedy":{ "loaded": False, "books_ready": [0,1,2],
         "books":[{"title": "Vol 1: Inferno", "book_num": 1,
@@ -53,12 +52,12 @@ preloaded_dicts = {
             ]},
     }
 
-# Gather additional preloads from root/user/ (if they exist)
+# Gather additional preloads from a custom preload file (if it exists)
 try:
-    import user.preloads
-    preloaded_dicts.update(user.preloads.preloaded_dicts)
+    import preloads.my_preloads
+    preloaded_dicts.update(preloads.my_preloads.preloaded_dicts)
 except ImportError or ModuleNotFoundError:
-    print("No user defined preloads found")
+    print("No additional user defined preloads found")
 
 def parse_preload(series_name, book_subset = None, prog_bar = None):
     # Verify that the name is recognized
