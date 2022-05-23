@@ -6,7 +6,6 @@ from ebooklib import epub
 import preloads.preloads
 import re
 from PIL import Image
-from preloads.preloads import parse_preload
 from lib.epub_parser import get_relevant_secs, extract_chapters
 import time
 
@@ -20,16 +19,50 @@ st.set_page_config(page_title="WAYA: Who Are You Again?", page_icon=im,
 #### Function Definitions #################################################
 ###########################################################################
 
-DATE_COLUMN = 'date/time'
-DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
-         'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
-
-def load_data(nrows):
-    data = pd.read_csv(DATA_URL, nrows=nrows)
-    lowercase = lambda x: str(x).lower()
-    data.rename(lowercase, axis='columns', inplace=True)
-    data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
-    return data
+def parse_preload(series_name, book_subset = None, prog_bar = None):
+    # Verify that the name is recognized
+    assert series_name in preloaded_dicts.keys(), f"preload series {series_name} not found."
+    # If book_subset is not passed set it to all books found in the series
+    if book_subset is None:
+        # book_subset = list(range(0,len(preloaded_dicts[series_name]["books"])))
+        book_subset = preloaded_dicts[series_name]["books_ready"]
+        if len(book_subset) == 0: return
+    # Check that book_subset is in range
+    assert(max(book_subset) < len(preloaded_dicts[series_name]["books"])), f"Book subet ({book_subset}) out of range"
+    assert(0 <= min(book_subset)), f"Book subet ({book_subset}) out of range"
+    
+    # Load metadata from all book in series
+    for book_dict in preloaded_dicts[series_name]["books"]:
+        # Set some of the basic book attributes
+        file_path = book_dict["filename"]
+        book = epub.read_epub(file_path)
+        if (book_dict["title"] == ""):
+            book_dict["title"] = book.get_metadata("DC", "title")[0][0]
+        book_dict["file_type"] = file_path[file_path.find(".")+1:]
+        book_dict["chapters"] = [{'name':"TBD", 'text':"",'bs_sec':0}]
+    
+    # Create dict for tracking progress if progress bar passed
+    prog_dict = None
+    if prog_bar is not None:
+        prog_dict = {"st_prog":prog_bar, 
+                    "bk_contrib":1/len(book_subset),
+                    "prog_curr": 0}
+    # Load chapter data only for those in the subset
+    for book_dict in [preloaded_dicts[series_name]["books"][i] for i in book_subset]:
+        # Grab the filename and some metatdata
+        file_path = book_dict["filename"]
+        book_num = book_dict['book_num']
+        # Extract the chapters
+        ch_data = extract_chapters(file_path, secs = book_dict["include_secs"],
+                                    title_bs_tags = book_dict["sec_bs_tags"],
+                                    prog = prog_dict)
+        book_dict["chapters"] = ch_data
+        # Update progress bar (if passed)
+        if prog_bar is not None:
+            prog_dict["prog_curr"] += 1/len(book_subset)
+    
+    # Turn on flag indicating the series has been loaded
+    preloaded_dicts[series_name]["loaded"] = True
 
 def load_book(file_loader_obj):
     # Takes a file_loader object and returns a dictionary
@@ -63,9 +96,6 @@ def load_book(file_loader_obj):
             "title": book_title,
             "file_type": file_type,
             "chapters": chapters}
-
-def load_epub_book(file_loader_obj):
-    return "What?!"
 
 def merge_overlapping_strings(s1, s2, min_overlap = 1):
     biggest_overlap = 0
