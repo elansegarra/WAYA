@@ -111,10 +111,9 @@ def merge_overlapping_strings(s1, s2, min_overlap = 1):
 preloaded_dicts = preloads.preloads.preloaded_dicts
 
 ###########################################################################
-#### App Running ##########################################################
+#### App - Sidebar ########################################################
 ###########################################################################
 
-# Sidebar
 with st.sidebar:
     all_books = []
     st.title("Which Series or Book?")
@@ -175,13 +174,17 @@ with st.sidebar:
 
 # st.write(all_books)
 
+###########################################################################
+#### App - Main Page ######################################################
+###########################################################################
 
-# Main Page
-
+st.title("Who Are You Again?")
 if len(all_books) == 0:
-    st.title("Pick or Upload a book/series in the sidebar to the left.")
+    st.header("Three quick steps to spoiler free searching!")
+    st.write("1. Pick a preloaded book series or upload your own files in the sidebar to the left.")
+    st.write("2. Choose which book and chapter you are currently reading.")
+    st.write("3. Enter a search term and only the results from before where you are will be displayed!")
 else:
-    st.title("Who Are You Again?")
     search_value = st.text_input("Search:", placeholder="Type a name or phrase here")
 
     res_window = st.container()

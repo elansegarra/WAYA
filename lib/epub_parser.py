@@ -1,7 +1,7 @@
 import ebooklib
 from ebooklib import epub
 from bs4 import BeautifulSoup
-from numpy import log10
+from numpy import log10, median
 
 
 def extract_chapters(file_loader_obj, secs = None, title_bs_tags = None, 
@@ -99,7 +99,7 @@ def get_relevant_secs(epub_file):
         sec_lens.append(len(soup.get_text()))
     
     # Section needs at least 20% of median length to be relevant
-    char_len_thresh = np.median(sec_lens)/10
+    char_len_thresh = median(sec_lens)/10
     relevant_secs = [i for i in range(1,len(sec_lens)) if sec_lens[i] >= char_len_thresh]
 
     return relevant_secs
