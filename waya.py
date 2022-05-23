@@ -3,16 +3,16 @@ import pandas as pd
 import numpy as np
 import ebooklib
 from ebooklib import epub
-import lib.preloaded
+import preloads.preloads
 import re
 from PIL import Image
-from lib.preloaded import parse_preload
+from preloads.preloads import parse_preload
 from lib.epub_parser import get_relevant_secs, extract_chapters
 import time
 
 # To run from command line (in lib folder): "streamlit run waya.py --server.port 8889"
 
-im = Image.open("res/img/read-book-32x32.png")
+im = Image.open("img/read-book-32x32.png")
 st.set_page_config(page_title="WAYA: Who Are You Again?", page_icon=im, 
                     layout="centered", initial_sidebar_state="auto", menu_items=None)
 
@@ -78,7 +78,7 @@ def merge_overlapping_strings(s1, s2, min_overlap = 1):
     else:                    return(s1[:-biggest_overlap]+s2)
 
 # Grab the preloaded series information
-preloaded_dicts = lib.preloaded.preloaded_dicts
+preloaded_dicts = preloads.preloads.preloaded_dicts
 
 ###########################################################################
 #### App Running ##########################################################
