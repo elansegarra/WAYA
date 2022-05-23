@@ -13,5 +13,6 @@ The process is quick and easy:
  3. Search for any character or phrase without worrying about spoilers!
 
 WAYA Features:
- - Several preloaded book series.
+ - Several preloaded book series from project Gutenberg.
+ - Ability to upload and parse your own EPUB book files.
  - Flexibility to adjust the context window around search terms.
