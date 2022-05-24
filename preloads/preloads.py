@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from lib.epub_parser import extract_ch_data, extract_chapters
 
 # Defining the preloaded series and associated files
-preload_folder = "preloads\\"
+preload_folder = "preloads/"
 preloaded_dicts = {
     "The Divine Comedy (by Alighieri)":{ "loaded": False, "books_ready": [0,1,2],
         "books":[{"title": "Vol 1: Inferno", "book_num": 1,
