@@ -8,7 +8,5 @@ dependencies:
 - pandas
 - jupyterlab
 - pip:
-  - streamlit
   - EbookLib
-  - seaborn
   - BeautifulSoup4
