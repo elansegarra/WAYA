@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import ebooklib
 from ebooklib import epub
 import preloads.preloads
 import re
