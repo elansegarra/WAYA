@@ -7,12 +7,12 @@ WAYA is here to jog your memory by searching through the text of a book or serie
 
 Check out the live version of this application here!
 
-The process is quick and easy:
+Using WAYA is quick and easy:
  1. Choose a preloaded book series or upload your own.
  2. Choose which book and chapter you are currently reading.
  3. Search for any character or phrase without worrying about spoilers!
 
-WAYA Features:
+Features include:
  - Several preloaded book series from project Gutenberg.
  - Ability to upload and parse your own EPUB book files.
  - Flexibility to adjust the context window around search terms.
