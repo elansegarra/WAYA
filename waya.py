@@ -6,6 +6,7 @@ import preloads.preloads
 import re
 from PIL import Image
 from lib.epub_parser import get_relevant_secs, extract_chapters
+from streamlit_sortables import sort_items
 import time
 
 # To run from command line (in lib folder): "streamlit run waya.py --server.port 8889"
@@ -147,6 +148,18 @@ with st.sidebar:
         time.sleep(0.5)
         load_progress.empty()
             
+    # Displaying and changing the order of books
+    if len(all_books) > 0:
+        with st.expander("Book Order"):
+            # Extract current order and display the titles
+            bk_titles = [bk['title'] for bk in all_books]
+            resorted_bks = sort_items(bk_titles, direction='vertical')
+            # If order has changed, then reorder the books accordingly
+            if bk_titles != resorted_bks:
+                new_books = []
+                for bk in resorted_bks:
+                    new_books.append(all_books[bk_titles.index(bk)])
+                all_books = new_books
 
     # Current Place Inputs (sets book names and associated chapters)    
     if len(all_books) == 0:

@@ -3,3 +3,4 @@ pandas
 jupyterlab
 EbookLib
 BeautifulSoup4
+streamlit_sortables
