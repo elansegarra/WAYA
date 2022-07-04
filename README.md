@@ -1,4 +1,4 @@
-# WAYA: Who Are You Again?
+# 📚 WAYA: Who Are You Again?
 **Spoiler free book text searching**
 
 While reading a book, have you ever come across a character that made you ask "Who are you again?", but then been afraid to search for infomation online in case it lead to spoilers?
