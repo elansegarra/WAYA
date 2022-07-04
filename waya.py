@@ -116,8 +116,21 @@ def merge_overlapping_strings(s1, s2, min_overlap = 1):
     if biggest_overlap == 0: return(s1+s2)
     else:                    return(s1[:-biggest_overlap]+s2)
 
-# Grab the preloaded series information
-preloaded_dicts = preloads.preloads.preloaded_dicts
+# Grab and initialize the preloaded series information
+if "preloaded_dicts" not in st.session_state:
+    preloaded_dicts = preloads.preloads.preloaded_dicts
+    for key, series in preloaded_dicts.items():
+        series["loaded"] = False
+        if "books_ready" not in series:
+            series['books_ready'] = list(range(len(series["books"])))
+        for bk in series['books']:
+            if "include_secs" not in bk:
+                bk["include_secs"] = None
+            if "sec_bs_tags" not in bk:
+                bk["sec_bs_tags"] = None
+    st.session_state["preloaded_dicts"] = preloaded_dicts
+else:
+    preloaded_dicts = st.session_state["preloaded_dicts"]
 
 ###########################################################################
 #### App - Sidebar ########################################################
@@ -218,7 +231,7 @@ if len(all_books) == 0:
     st.write("2. Choose which book and chapter you are currently reading.")
     st.write("3. Enter a search term and only the results from before where you are will be displayed!")
 else:
-    search_value = st.text_input("Search:", placeholder="Type a name or phrase here")
+    search_value = st.text_input("Search:", placeholder="Type a name or phrase to search for here")
 
     res_window = st.container()
     if search_value != "":
