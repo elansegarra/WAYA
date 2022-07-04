@@ -114,6 +114,12 @@ preloaded_dicts = preloads.preloads.preloaded_dicts
 #### App - Sidebar ########################################################
 ###########################################################################
 
+# Initializing sessions state for currently loaded books
+if 'loaded_books' not in st.session_state:
+    st.session_state['loaded_books'] = None
+if 'all_books' not in st.session_state:
+    st.session_state['all_books'] = None
+
 with st.sidebar:
     all_books = []
     st.title("Which Series or Book?")
@@ -136,18 +142,23 @@ with st.sidebar:
     elif preload_or_upload == "Upload your own series":
         uploaded_files = st.file_uploader("Upload book(s) (from the same series in order of reading)", 
                                     accept_multiple_files=True, type = ['txt', 'epub'])
-        # Process the loaded book files       
-        load_progress = st.progress(0)
-        with st.spinner(f'Loading uploaded book(s)...'):
-            for i in range(len(uploaded_files)):
-                uploaded_file = uploaded_files[i]
-                bk_data = load_book(uploaded_file)
-                bk_data["book_num"] = i+1
-                all_books.append(bk_data)
-                # parse_preload(series_choice, prog_bar=load_progress)
-        time.sleep(0.5)
-        load_progress.empty()
-            
+        # Process the loaded book files (after checking if they have changed)
+        if st.session_state['loaded_books'] != uploaded_files:      
+            load_progress = st.progress(0)
+            with st.spinner(f'Processing uploaded book(s)...'):
+                for i in range(len(uploaded_files)):
+                    uploaded_file = uploaded_files[i]
+                    bk_data = load_book(uploaded_file)
+                    bk_data["book_num"] = i+1
+                    all_books.append(bk_data)
+                    # parse_preload(series_choice, prog_bar=load_progress)
+            time.sleep(0.5)
+            load_progress.empty()
+            st.session_state['loaded_books'] = uploaded_files
+            st.session_state['all_books'] = all_books
+        else:
+            all_books = st.session_state['all_books']
+
     # Displaying and changing the order of books
     if len(all_books) > 0:
         with st.expander("Book Order"):
@@ -160,6 +171,7 @@ with st.sidebar:
                 for bk in resorted_bks:
                     new_books.append(all_books[bk_titles.index(bk)])
                 all_books = new_books
+                st.session_state['all_books'] = all_books
 
     # Current Place Inputs (sets book names and associated chapters)    
     if len(all_books) == 0:
@@ -184,7 +196,7 @@ with st.sidebar:
         group_res_by = st.radio("Group results by:", ["Book", "Chapter"])
         # group_chs_true = st.checkbox("Group results by chapter", value=False)
 
-# st.write(all_books)
+# st.write([bk['title'] for bk in all_books])
 
 ###########################################################################
 #### App - Main Page ######################################################
@@ -205,8 +217,6 @@ else:
 
         search_res = []
         for book in all_books:
-            # Skip searching all books after the book currently being read
-            if (book['book_num'] > curr_book_dict['book_num']): break
             for ch in book['chapters']:
                 # Skip searching all chapters after (and including) chapter currently being read
                 curr_reading_this_book = (book['book_num'] == curr_book_dict['book_num'])
@@ -229,6 +239,8 @@ else:
                     search_res.append({"book":book["title"], "chapter":ch['name'], 
                                         "res_ind_start":res_start, 
                                         "overlap": False, "context":context})
+            # Skip searching rest of books after searching the book currently being read
+            if (book['title'] == curr_book_dict['title']): break
 
         # Creating text with search value highlighted
         search_pattern = re.compile(search_value, re.IGNORECASE)
