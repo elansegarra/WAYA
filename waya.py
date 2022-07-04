@@ -15,6 +15,15 @@ im = Image.open("img/read-book-32x32.png")
 st.set_page_config(page_title="WAYA: Who Are You Again?", page_icon=im, 
                     layout="centered", initial_sidebar_state="auto", menu_items=None)
 
+# This hides the "Made by Streamlit" and hamburger menu
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+
 ###########################################################################
 #### Function Definitions #################################################
 ###########################################################################
