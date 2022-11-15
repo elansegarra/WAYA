@@ -224,7 +224,7 @@ with st.sidebar:
 #### App - Main Page ######################################################
 ###########################################################################
 
-st.title("Who Are You Again?")
+st.title("WAYA: Who Are You Again?")
 if len(all_books) == 0:
     st.header("Three quick steps to spoiler free searching!")
     st.write("1. Pick a preloaded book series or upload your own files in the sidebar to the left.")
@@ -240,9 +240,14 @@ else:
         search_res = []
         for book in all_books:
             for ch in book['chapters']:
-                # Skip searching all chapters after (and including) chapter currently being read
+                # Quick indicator for if this is the current book being read
                 curr_reading_this_book = (book['book_num'] == curr_book_dict['book_num'])
-                if curr_reading_this_book & (ch['bs_sec'] >= curr_ch_dict['bs_sec']): break
+                # Small tweaks for when either chapter has multiple sections
+                this_ch_sec, curr_ch_sec = ch['bs_sec'], curr_ch_dict['bs_sec']
+                if isinstance(this_ch_sec, list): this_ch_sec = this_ch_sec[0]
+                if isinstance(curr_ch_sec, list): curr_ch_sec = curr_ch_sec[0]
+                # Skip searching all chapters after (and including) chapter currently being read
+                if curr_reading_this_book & (this_ch_sec >= curr_ch_sec): break
                 # Go through each instance of finding the search term
                 for res in re.finditer(search_value, ch['text'],flags=re.IGNORECASE):
                     res_start = max(0,res.start()-context_radius)
